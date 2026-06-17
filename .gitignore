@@ -1,0 +1,38 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.python-version
+
+# ---- Testing / tooling ----
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Generated data & model artifacts -------------------------------------
+# These are reproducible from `bash scripts/run_daily_pipeline.sh`, so they are
+# not committed. Small curated sample outputs under reports/ ARE committed.
+data/raw/
+data/synthetic/
+data/processed/
+reports/sql_exports/
+
+# Keep the directory structure (placeholder .gitkeep files are tracked).
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/synthetic/.gitkeep

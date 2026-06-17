@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    env:
+      # Small synthetic dataset for a fast, deterministic CI run.
+      BFI_QUICK: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint (perl syntax check)
+        run: perl -c scripts/parse_raw_logs.pl
+
+      - name: Pipeline smoke test (quick mode)
+        run: bash scripts/run_daily_pipeline.sh
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Upload generated reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: battery-reports
+          path: |
+            reports/
+            dashboards/tableau_extracts/
+          if-no-files-found: ignore
