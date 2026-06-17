@@ -14,6 +14,45 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 
 ---
 
+## 👋 For recruiters / hiring managers
+
+**What this demonstrates (in 5 bullets):**
+- **End-to-end ownership** — raw telemetry → star-schema SQL warehouse → features → ML → automated reports/dashboards, orchestrated by one script and gated by CI + tests.
+- **Battery-reliability ML** — SOH, RUL, and failure-risk models with leakage-aware, cell-grouped validation and SHAP/permutation explainability.
+- **Real public data** — parses NASA PCoE's original MATLAB `.mat` battery-aging archive directly (not just a mirror) and recovers physically sensible degradation.
+- **Decision-ready reporting** — a ranked escalation queue with likely root cause + recommended follow-up per cell, plus Tableau-ready extracts and JMP handoff files.
+- **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, and pytest + GitHub Actions.
+
+**Why it fits the Apple Battery DS Contractor role:** the JD centers on Python ML,
+SQL/data-warehousing, factory/usage/failure analysis, urgent escalation reporting,
+Tableau/JMP, and a Unix/Bash/Perl environment — each maps to a concrete, runnable
+artifact here (see the [role-fit table](#role-fit-apple-battery-engineering-data-scientist-contractor)
+and the [readiness scorecard](reports/project_readiness_scorecard.md)).
+
+**Run it in 3 commands:**
+```bash
+pip install -r requirements.txt      # 1. install (Python 3.10+)
+bash scripts/run_daily_pipeline.sh   # 2. generate everything end-to-end
+pytest -q                            # 3. run the test suite
+```
+
+Skip to [**Demo outputs**](#-demo-outputs) to read the generated reports without running anything.
+
+---
+
+## 📂 Demo outputs
+
+Prefer to skim the results first? These are real artifacts the pipeline generates,
+committed so you can read them on GitHub without running anything:
+
+- 🚨 [**Daily escalation summary**](reports/high_risk_cells_summary.md) — ranked high-risk cells with likely root cause + recommended follow-up.
+- 📈 [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / failure-risk metrics, confusion matrix, and top drivers.
+- 🔋 [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
+- 📊 [**Tableau dashboard blueprint**](dashboards/tableau_dashboard_blueprint.md) — the 4 dashboard pages (fields + charts per page).
+- ✅ [**Project readiness scorecard**](reports/project_readiness_scorecard.md) — evidence-based mapping of each role competency to a concrete artifact.
+
+---
+
 ## Why this project exists
 
 Battery reliability teams live and die by three questions, every single day:

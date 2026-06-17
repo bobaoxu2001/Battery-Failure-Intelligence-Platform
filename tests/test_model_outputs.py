@@ -1,6 +1,8 @@
 """Tests for model outputs, prediction schema and escalation reporting."""
 from __future__ import annotations
 
+import re
+
 import pandas as pd
 import pytest
 
@@ -88,6 +90,38 @@ def test_escalation_rows_have_root_cause_and_follow_up(escalation):
     assert escalation["likely_root_cause"].notna().all()
     assert escalation["recommended_follow_up"].notna().all()
     assert (escalation["recommended_follow_up"].str.len() > 0).all()
+
+
+def test_escalation_summary_counts_reconcile(escalation):
+    """Guard: the headline total must equal the sum of the per-tier breakdown.
+
+    Regression test for the count mismatch where the headline said "32 cells"
+    but only listed 24 Critical + 7 High (the Medium rule-based escalation was
+    hidden). The displayed total, the composition table, the Total row, and the
+    actual queue length must all agree.
+    """
+    text = (config.REPORTS_DIR / "high_risk_cells_summary.md").read_text(encoding="utf-8")
+
+    headline = re.search(r"\*\*(\d+) cells\*\* require engineering attention", text)
+    assert headline, "could not find the headline total in the summary"
+    headline_total = int(headline.group(1))
+
+    tier_counts = {}
+    for tier in ("Critical", "High", "Medium", "Low"):
+        row = re.search(rf"^\|\s*{tier}\s*\|\s*(\d+)\s*\|", text, re.MULTILINE)
+        assert row, f"composition table is missing the {tier} row"
+        tier_counts[tier] = int(row.group(1))
+
+    total_row = re.search(r"\|\s*\*\*Total\*\*\s*\|\s*\*\*(\d+)\*\*\s*\|", text)
+    assert total_row, "composition table is missing the Total row"
+
+    assert sum(tier_counts.values()) == headline_total, (
+        f"tier counts {tier_counts} sum to {sum(tier_counts.values())} "
+        f"but headline says {headline_total}"
+    )
+    assert int(total_row.group(1)) == headline_total
+    # The displayed total must also match the actual machine-readable queue.
+    assert headline_total == len(escalation)
 
 
 # --- JMP / monitoring outputs ----------------------------------------------

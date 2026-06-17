@@ -75,9 +75,20 @@ def generate() -> pd.DataFrame:
 
 def _write_markdown(queue: pd.DataFrame) -> None:
     n = len(queue)
-    crit = int((queue["risk_tier"] == "Critical").sum())
-    high = int((queue["risk_tier"] == "High").sum())
+    # Count every risk tier so the headline total always reconciles with the
+    # breakdown. A cell can enter the queue two ways: model risk_tier is
+    # High/Critical, OR the failure-event record flags escalation_required = 1
+    # (a hard rule) even when the model risk tier is Medium/Low. The latter are
+    # surfaced explicitly as "other rule-based escalations" so the numbers add up.
+    tier_order = ["Critical", "High", "Medium", "Low"]
+    tier_counts = {tier: int((queue["risk_tier"] == tier).sum()) for tier in tier_order}
+    crit, high = tier_counts["Critical"], tier_counts["High"]
+    other = n - crit - high  # Medium/Low rows present only via the escalation rule
     top = queue.sort_values("failure_probability", ascending=False).head(15)
+
+    headline_parts = [f"**{crit} Critical**", f"**{high} High**"]
+    if other:
+        headline_parts.append(f"**{other} other rule-based escalation(s)**")
 
     lines = [
         "# High-Risk Battery Cells - Daily Escalation Summary",
@@ -85,7 +96,18 @@ def _write_markdown(queue: pd.DataFrame) -> None:
         f"_Generated: {date.today().isoformat()} • synthetic data; no Apple confidential data used._",
         "",
         f"**{n} cells** require engineering attention today "
-        f"(**{crit} Critical**, **{high} High**).",
+        f"({', '.join(headline_parts)}).",
+        "",
+        "## Queue composition by risk tier",
+        "",
+        "| Risk tier | Cells |",
+        "| --- | --- |",
+        *[f"| {tier} | {tier_counts[tier]} |" for tier in tier_order],
+        f"| **Total** | **{n}** |",
+        "",
+        "_Medium/Low rows are in the queue because the failure-event record already "
+        "flags them for escalation (`escalation_required = 1`), even though the model "
+        "risk tier is below High._",
         "",
         "## Top cells in the escalation queue",
         "",

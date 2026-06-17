@@ -2,7 +2,19 @@
 
 _Generated: 2026-06-17 • synthetic data; no Apple confidential data used._
 
-**32 cells** require engineering attention today (**24 Critical**, **7 High**).
+**32 cells** require engineering attention today (**24 Critical**, **7 High**, **1 other rule-based escalation(s)**).
+
+## Queue composition by risk tier
+
+| Risk tier | Cells |
+| --- | --- |
+| Critical | 24 |
+| High | 7 |
+| Medium | 1 |
+| Low | 0 |
+| **Total** | **32** |
+
+_Medium/Low rows are in the queue because the failure-event record already flags them for escalation (`escalation_required = 1`), even though the model risk tier is below High._
 
 ## Top cells in the escalation queue
 
