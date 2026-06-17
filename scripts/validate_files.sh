@@ -43,22 +43,32 @@ check_file "data/processed/factory.csv"        2
 check_file "data/processed/cycles.csv"         100
 check_file "data/processed/usage.csv"          2
 check_file "data/processed/failure_events.csv" 2
+check_file "data/processed/parsed_raw_logs.csv" 2
 check_file "data/processed/cycle_features.csv" 100
 check_file "data/processed/cell_features.csv"  2
+check_file "data/public_samples/nasa_real_cycle_summary_sample.csv" 100
+check_file "data/processed/nasa_real_cycle_summary.csv" 100
 
 echo "==> Validating warehouse + model artifacts"
 check_file "data/processed/battery_warehouse.db" 1
 check_file "data/processed/model_predictions.csv" 2
-check_file "data/processed/models/soh_model.joblib"     1 optional
-check_file "data/processed/models/rul_model.joblib"     1 optional
-check_file "data/processed/models/failure_model.joblib" 1 optional
+check_file "data/processed/models/soh_model.joblib"     1
+check_file "data/processed/models/rul_model.joblib"     1
+check_file "data/processed/models/failure_model.joblib" 1
 
 echo "==> Validating reports + dashboard extracts"
 check_file "reports/escalation_report_sample.csv"      1
 check_file "reports/high_risk_cells_summary.md"        3
 check_file "reports/model_performance_summary.md"      3
+check_file "reports/model_monitoring_summary.md"       3
+check_file "reports/model_monitoring_metrics.csv"      2
+check_file "reports/project_readiness_scorecard.md"    3
+check_file "reports/real_data_validation_summary.md"   3
+check_file "reports/jmp_cell_analysis.csv"             2
+check_file "reports/jmp_battery_analysis.jsl"          3
 check_file "dashboards/tableau_extracts/executive_battery_health.csv" 2
 check_file "dashboards/tableau_extracts/factory_lot_quality.csv"      2
+check_file "dashboards/tableau_extracts/engineering_root_cause.csv"   2
 check_file "dashboards/tableau_extracts/escalation_queue.csv"         1
 
 echo

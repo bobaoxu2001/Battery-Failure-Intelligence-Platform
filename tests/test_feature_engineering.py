@@ -10,6 +10,7 @@ from src.features.build_features import (
     CELL_FEATURE_COLUMNS,
     CYCLE_FEATURE_COLUMNS,
     _initial_capacity,
+    _leave_one_out_group_rate,
     _remaining_cycles,
 )
 
@@ -55,6 +56,22 @@ def test_one_feature_row_per_cell_cycle(cycle_features):
 
 def test_cell_features_one_row_per_cell(cell_features):
     assert cell_features["cell_id"].is_unique
+
+
+def test_group_rates_exclude_current_cell_target():
+    frame = pd.DataFrame(
+        {
+            "cell_id": ["A", "B", "C", "D"],
+            "batch_id": ["LOT-1", "LOT-1", "LOT-1", "LOT-2"],
+            "escalation_required": [1, 0, 0, 1],
+        }
+    )
+    rates = _leave_one_out_group_rate(frame, "batch_id", "escalation_required")
+    assert rates["A"] == pytest.approx(0.0)
+    assert rates["B"] == pytest.approx(0.5)
+    assert rates["C"] == pytest.approx(0.5)
+    # Singleton group falls back to fleet leave-one-out, excluding D itself.
+    assert rates["D"] == pytest.approx(1 / 3)
 
 
 # --- Unit tests of the pure helpers ----------------------------------------

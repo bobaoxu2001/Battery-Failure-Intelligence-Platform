@@ -6,10 +6,11 @@ data warehouse; trains ML models for **state-of-health (SOH)**, **remaining usef
 life (RUL)**, and **failure-risk prediction**; and generates **automated engineering
 escalation reports** and **Tableau-ready dashboard outputs**.
 
-> ⚠️ **Data disclaimer:** this project uses **100% synthetic, physically-motivated
-> battery data** generated locally. It does **not** use any Apple confidential data
-> and does **not** imply access to any Apple internal system. It is a personal
-> portfolio project built to demonstrate relevant engineering-analytics skills.
+> ⚠️ **Data disclaimer:** the default end-to-end pipeline uses **synthetic,
+> physically-motivated battery data** generated locally. The repo also includes a
+> bundled validation sample and adapter for **public real NASA PCoE battery aging data**.
+> It does **not** use any Apple confidential data and does **not** imply access to
+> any Apple internal system.
 
 ---
 
@@ -38,14 +39,19 @@ Contractor – Battery Engineering Analytics** role.
 | JD requirement | Where it lives in this repo |
 | --- | --- |
 | **Python ML functions** | `src/models/` — SOH regression, RUL regression, failure classification (scikit-learn, optional LightGBM/XGBoost) |
-| **GitHub software traceability** | Modular `src/` package, `pyproject.toml`, tests, GitHub Actions CI (`.github/workflows/ci.yml`) |
+| **GitHub software traceability** | Modular `src/` package, `pyproject.toml`, tests, GitHub Actions CI, `LICENSE`, and `reports/project_readiness_scorecard.md` |
 | **SQL database & data warehousing / modeling** | `sql/` star schema + marts, built into SQLite/DuckDB by `src/warehouse/` |
+| **Large-table / big-data habits** | Chunked cycle fact loading via `BFI_WAREHOUSE_CHUNKSIZE` in `src/warehouse/build_warehouse.py` |
+| **Real public battery data** | `src/ingest/nasa_mat_parser.py` parses NASA's original `.mat` archive directly (+ CSV-mirror fallback) → `reports/real_data_validation_summary.md` |
 | **Factory, user & failure data analysis** | `factory`, `usage`, `failure_events` tables + `mart_factory_quality`, station/lot anomaly analysis |
 | **Urgent escalation reporting** | `src/reporting/generate_escalation_report.py` → `reports/escalation_report_sample.csv` + `high_risk_cells_summary.md` |
 | **Tableau-ready reporting** | `dashboards/tableau_extracts/*.csv` + `dashboards/tableau_dashboard_blueprint.md` (4 dashboard pages) |
 | **Unix / Bash / Perl environment** | `scripts/parse_raw_logs.pl`, `validate_files.sh`, `run_daily_pipeline.sh`, `sql_export.sh` |
+| **TCP/IP data-source checks** | `scripts/check_data_source_connectivity.sh` — `host:port` preflight using `nc` / `/dev/tcp` before ingest jobs |
+| **JMP-ready engineering analysis** | `src/reporting/generate_jmp_exports.py` → `reports/jmp_cell_analysis.csv` + `reports/jmp_battery_analysis.jsl` |
 | **Statistics & value-added analysis** | Feature engineering, grouped validation, correlation/anomaly analysis, model metrics |
-| **Reporting automation** | One-command daily pipeline regenerates data → warehouse → models → reports → extracts |
+| **Production-style monitoring** | `src/models/monitor_drift.py` → cohort PSI, risk mix, and top-driver monitoring summary |
+| **Reporting automation** | One-command daily pipeline regenerates data → features → warehouse → models → reports → extracts |
 | **AI-powered reusable workflows** | `ai_workflows/` — 4 reusable LLM skills for anomaly triage, NL→SQL, model debugging, escalation writing |
 | **Battery engineering domain** | Capacity fade + knee, impedance growth, thermal/fast-charge stress, EOL at 80% SOH, lot/station quality |
 
@@ -56,6 +62,7 @@ Contractor – Battery Engineering Analytics** role.
 ```mermaid
 flowchart LR
     GEN[Synthetic data generator<br/>factory · cycles · usage · failures · raw logs] --> ING[Ingest & clean<br/>load_raw_data.py]
+    REAL[Public NASA battery data<br/>official .mat archive / mirror / sample] --> RV[Real-data validation<br/>capacity fade sanity check]
     PERL[parse_raw_logs.pl<br/>Perl telemetry parser] -.-> ING
     ING --> FEAT[Feature engineering<br/>cycle + cell features]
     FEAT --> WH[(SQLite/DuckDB warehouse<br/>dims · facts · marts)]
@@ -65,12 +72,15 @@ flowchart LR
     SCORE --> WH
     WH --> ESC[Escalation report<br/>CSV + Markdown]
     WH --> TAB[Tableau extracts<br/>+ mock dashboards]
+    WH --> JMP[JMP handoff<br/>CSV + JSL]
     ML --> PERF[Model performance summary]
+    SCORE --> MON[Monitoring<br/>cohort PSI + risk mix]
+    RV --> SCORECARD[Readiness scorecard]
     AI[ai_workflows/*.md<br/>reusable LLM skills] -.-> ESC
     AI -.-> QC
 ```
 
-The whole thing is orchestrated by **`scripts/run_daily_pipeline.sh`** (11 steps),
+The whole thing is orchestrated by **`scripts/run_daily_pipeline.sh`** (15 steps),
 runs locally from a fresh clone with no database server, and is exercised in CI on
 every push.
 
@@ -78,7 +88,7 @@ every push.
 
 ## Data model
 
-Five linked source tables, all synthetic:
+Five linked source tables drive the default synthetic warehouse:
 
 | Table | Grain | Key fields |
 | --- | --- | --- |
@@ -101,6 +111,46 @@ DDL: [`sql/create_schema.sql`](sql/create_schema.sql) · marts:
 [`sql/quality_checks.sql`](sql/quality_checks.sql) · ad-hoc engineering questions:
 [`sql/example_ad_hoc_queries.sql`](sql/example_ad_hoc_queries.sql).
 
+### Real Public Data Validation
+
+The default ML/warehouse training path remains **synthetic** so it is fast and
+fully reproducible. As an independent **external validation** layer, the project
+also ingests **real public NASA PCoE battery aging data** and writes
+`reports/real_data_validation_summary.md` from
+`data/processed/nasa_real_cycle_summary.csv`.
+
+`src/ingest/import_public_battery_data.py` selects the best available source, in
+order of authority:
+
+1. **Official NASA `.mat` archive** — `src/ingest/nasa_mat_parser.py` parses
+   NASA's original MATLAB `.mat` files **directly** (capacity → SOH, plus
+   per-discharge temperature and voltage slopes derived from the raw signals).
+   Place the archive at `data/raw/5. Battery Data Set/` (the nested
+   `BatteryAgingARC_*.zip` files NASA ships) and it is used automatically:
+   `SOURCE=archive bash scripts/run_real_data_validation.sh`
+2. **Processed-CSV mirror** — a lightweight third-party convenience mirror for
+   quick demos when the official archive is not on disk:
+   `DOWNLOAD=1 bash scripts/run_real_data_validation.sh`
+3. **Bundled sample** — a small committed sample (cells **B0005/B0006/B0007/B0018**,
+   636 real discharge cycles) **generated from the official `.mat` archive**, so
+   CI and fresh clones still produce a real-data report with no downloads.
+
+Upstream source (≈200MB): `https://phm-datasets.s3.amazonaws.com/NASA/5.+Battery+Data+Set.zip`.
+The official archive is gitignored (too large to commit); CI runs on the bundled
+sample, while local runs that have the archive use the authoritative `.mat` files.
+
+**Validated real degradation (from the official `.mat` files):**
+
+| Battery | Discharge cycles | Capacity loss | First < 80% SOH | Corr(cycle, capacity) |
+| --- | --- | --- | --- | --- |
+| B0005 | 168 | 28.6% | 100 | −0.99 |
+| B0006 | 168 | 41.7% | 60 | −0.98 |
+| B0007 | 168 | 24.3% | 123 | −0.99 |
+| B0018 | 132 | 27.7% | 74 | −0.97 |
+
+The archive exposes **34 batteries** (B0005–B0056); the default set is four for
+speed, overridable with `--battery-id` (e.g. `python -m src.ingest.import_public_battery_data --battery-id B0049`).
+
 ---
 
 ## ML modeling overview
@@ -111,8 +161,8 @@ given cell stay on one side of the split). Feature contracts are explicit in
 
 | Model | Target | Algorithms | Headline metrics* |
 | --- | --- | --- | --- |
-| **State of Health** | `soh_current = discharge_cap / initial_cap` | Linear baseline vs RandomForest / GradientBoosting | **R² 0.955 · MAE 0.010 · RMSE 0.015** |
-| **Remaining Useful Life** | cycles until SOH < 80% | RandomForest vs GradientBoosting | **MAE 46 cycles · RMSE 69 · R² 0.928** |
+| **State of Health** | `soh_current = discharge_cap / initial_cap` | Linear baseline vs RandomForest / GradientBoosting | **R² 0.948 · MAE 0.011 · RMSE 0.016** |
+| **Remaining Useful Life** | cycles until SOH < 80% | RandomForest vs GradientBoosting | **MAE 46 cycles · RMSE 70 · R² 0.926** |
 | **Failure Risk** | `escalation_required` | Logistic baseline vs RandomForest | **F1 0.857 · ROC-AUC 0.993 · Recall 1.00** |
 
 *From the latest 120-cell synthetic run; regenerated into
@@ -135,9 +185,11 @@ pipeline run. Numbers vary slightly with data scale / quick mode.*
 `scripts/run_daily_pipeline.sh` runs the full job end-to-end:
 
 1. Generate / ingest data → 2. Parse raw logs (Perl) + validate files →
-3. Build warehouse → 4. SQL quality checks → 5. Build features →
-6. Train / reuse models → 7. Score cells → 8. Write predictions to warehouse →
-9. Escalation report → 10. Tableau extracts → 11. Model performance summary.
+3. Build features → 4. Build warehouse → 5. Train / reuse models →
+6. Score cells + write predictions to warehouse → 7. SQL quality checks →
+8. Escalation report → 9. Tableau extracts → 10. JMP files →
+11. Model monitoring → 12. Model performance summary → 13. Real-data validation →
+14. Readiness scorecard → 15. File validation.
 
 Outputs are written to `data/processed/`, `reports/`, and `dashboards/`.
 
@@ -193,6 +245,9 @@ RETRAIN=1 bash scripts/run_daily_pipeline.sh   # force model retraining
 BFI_QUICK=1 bash scripts/run_daily_pipeline.sh # fast smoke test (small dataset)
 bash scripts/sql_export.sh                     # export ad-hoc SQL results to CSV
 perl scripts/parse_raw_logs.pl                 # parse raw telemetry logs only
+BFI_DATA_SOURCES="cycler-db.local:5432" bash scripts/check_data_source_connectivity.sh
+SOURCE=archive bash scripts/run_real_data_validation.sh # parse official NASA .mat archive
+DOWNLOAD=1 bash scripts/run_real_data_validation.sh     # or fetch processed-CSV mirror
 ```
 
 Explore interactively via the notebooks in [`notebooks/`](notebooks/) (requires
@@ -217,8 +272,8 @@ A readable daily standup version is written to
 
 | Model | Metric | Value |
 | --- | --- | --- |
-| SOH | MAE / RMSE / R² | 0.010 / 0.015 / 0.955 |
-| RUL | MAE / RMSE / R² | 46.0 / 69.4 / 0.928 |
+| SOH | MAE / RMSE / R² | 0.0107 / 0.0160 / 0.948 |
+| RUL | MAE / RMSE / R² | 46.1 / 70.1 / 0.926 |
 | Failure | Precision / Recall / F1 / AUC | 0.750 / 1.000 / 0.857 / 0.993 |
 
 ---
@@ -226,11 +281,15 @@ A readable daily standup version is written to
 ## What you get after a run
 
 - ✅ Processed synthetic battery data (`data/processed/*.csv`)
+- ✅ Optional real public NASA battery validation report (`reports/real_data_validation_summary.md`)
 - ✅ Local SQL warehouse (`data/processed/battery_warehouse.db`)
 - ✅ Trained model artifacts (`data/processed/models/*.joblib`)
 - ✅ Escalation report CSV + high-risk markdown summary (`reports/`)
 - ✅ Tableau-ready extracts + mock dashboards (`dashboards/`)
+- ✅ JMP-ready CSV + JSL starter analysis (`reports/jmp_*`)
+- ✅ Model monitoring / cohort drift summary (`reports/model_monitoring_*`)
 - ✅ Model performance summary (`reports/model_performance_summary.md`)
+- ✅ Evidence-based readiness scorecard (`reports/project_readiness_scorecard.md`)
 - ✅ Passing test suite + green CI
 
 ---
@@ -241,7 +300,8 @@ A readable daily standup version is written to
 `SQL data warehousing & dimensional modeling` · `SQLite/DuckDB` ·
 `data-quality testing` · `time-series degradation modeling` ·
 `classification & regression` · `model explainability (SHAP / permutation)` ·
-`reporting automation` · `Tableau dashboard design` · `Unix / Bash / Perl` ·
+`reporting automation` · `Tableau dashboard design` · `JMP handoff files` ·
+`TCP/IP data-source preflight` · `Unix / Bash / Perl` ·
 `pytest` · `GitHub Actions CI` · `reusable AI/LLM workflows` ·
 `battery-reliability domain storytelling`.
 
@@ -278,11 +338,13 @@ A readable daily standup version is written to
   ingests factory/usage/failure data into a **star-schema warehouse** and powers an
   automated daily **escalation-reporting** pipeline.
 - Trained **SOH, RUL, and failure-risk ML models** with leakage-aware, cell-grouped
-  validation (**SOH R² 0.96, RUL MAE ≈ 46 cycles, failure ROC-AUC 0.99 at 100% recall**),
+  validation (**SOH R² 0.95, RUL MAE ≈ 46 cycles, failure ROC-AUC 0.99 at 100% recall**),
   with SHAP/permutation explainability surfacing root-cause drivers.
 - Automated **data-quality gating, model scoring, and Tableau-ready reporting**, and
   authored **reusable LLM workflows** for anomaly triage and NL→SQL — all covered by
   **pytest + GitHub Actions CI**.
+- Added **JMP-ready handoff files, TCP/IP data-source preflight checks, and cohort
+  drift monitoring** to make the workflow closer to a real battery engineering data product.
 
 ---
 

@@ -24,6 +24,9 @@
     target *is* capacity-derived. If R² jumps to ~1.0, suspect this.
   - **Failure classifier** must *exclude* `batch_failure_rate` (it embeds the
     escalation target via the batch). AUC ≈ 1.0 with one dominant feature ⇒ leak.
+- Group-rate features such as `batch_failure_rate` and `station_anomaly_rate`
+  should be peer-only / leave-one-out; a cell must not contribute its own event
+  label to its feature row.
 - Are train/test split **by cell** (`GroupShuffleSplit`)? If rows from the same
   cell appear in both, cycle-level autocorrelation inflates scores.
 

@@ -97,6 +97,37 @@ def _remaining_cycles(soh: np.ndarray, cycle_index: np.ndarray) -> np.ndarray:
     return remaining
 
 
+def _leave_one_out_group_rate(
+    frame: pd.DataFrame,
+    group_col: str,
+    value_col: str,
+    id_col: str = "cell_id",
+) -> dict[str, float]:
+    """Return per-row group rates excluding that row's own target value.
+
+    Batch/station rates are useful manufacturing context, but a cell should not
+    get to encode its own escalation/anomaly label into its feature row.
+    Singleton groups fall back to the fleet leave-one-out rate.
+    """
+    total_sum = float(frame[value_col].sum())
+    total_count = int(frame[value_col].count())
+    stats = frame.groupby(group_col)[value_col].agg(["sum", "count"])
+
+    rates: dict[str, float] = {}
+    for row in frame[[id_col, group_col, value_col]].itertuples(index=False):
+        group = getattr(row, group_col)
+        own_value = float(getattr(row, value_col))
+        group_sum = float(stats.loc[group, "sum"])
+        group_count = int(stats.loc[group, "count"])
+        if group_count > 1:
+            rates[getattr(row, id_col)] = (group_sum - own_value) / (group_count - 1)
+        elif total_count > 1:
+            rates[getattr(row, id_col)] = (total_sum - own_value) / (total_count - 1)
+        else:
+            rates[getattr(row, id_col)] = 0.0
+    return rates
+
+
 def _build_cycle_features(
     cycles: pd.DataFrame, usage: pd.DataFrame, factory: pd.DataFrame, batch_rate: dict, station_rate: dict
 ) -> pd.DataFrame:
@@ -130,8 +161,8 @@ def _build_cycle_features(
         feat["fast_charge_ratio"] = float(u["fast_charge_ratio"])
         feat["avg_depth_of_discharge"] = float(u["avg_depth_of_discharge"])
         feat["high_temp_exposure_hours"] = float(u["high_temp_exposure_hours"])
-        feat["batch_failure_rate"] = batch_rate.get(batch_map[cell_id], 0.0)
-        feat["station_anomaly_rate"] = station_rate.get(station_map[cell_id], 0.0)
+        feat["batch_failure_rate"] = batch_rate.get(cell_id, 0.0)
+        feat["station_anomaly_rate"] = station_rate.get(cell_id, 0.0)
         feat["lot_id"] = lot_map[cell_id]
         feat["station_id"] = station_map[cell_id]
 
@@ -174,8 +205,9 @@ def _build_cell_features(
     df["lot_id"] = factory_idx["lot_id"]
     df["station_id"] = factory_idx["station_id"]
     df["batch_id"] = factory_idx["batch_id"]
-    df["batch_failure_rate"] = df["batch_id"].map(batch_rate).fillna(0.0)
-    df["station_anomaly_rate"] = df["station_id"].map(station_rate).fillna(0.0)
+    cell_index = df.index.to_series()
+    df["batch_failure_rate"] = cell_index.map(batch_rate).fillna(0.0).to_numpy()
+    df["station_anomaly_rate"] = cell_index.map(station_rate).fillna(0.0).to_numpy()
 
     # Classification target.
     fail_idx = failures.set_index("cell_id")
@@ -189,11 +221,11 @@ def build() -> dict[str, pd.DataFrame]:
     config.ensure_dirs()
     factory, cycles, usage, failures = _read_processed()
 
-    # Group-level rates computed once and reused as features (leave-one-out
-    # behaviour is documented in ai_workflows/model_debugging_workflow.md).
+    # Group-level rates computed once and reused as features. Each cell receives
+    # peer-only rates so its own target/event row cannot leak back into features.
     merged = failures.merge(factory[["cell_id", "batch_id", "station_id"]], on="cell_id")
-    batch_rate = merged.groupby("batch_id")["escalation_required"].mean().to_dict()
-    station_rate = merged.groupby("station_id")["thermal_anomaly_event"].mean().to_dict()
+    batch_rate = _leave_one_out_group_rate(merged, "batch_id", "escalation_required")
+    station_rate = _leave_one_out_group_rate(merged, "station_id", "thermal_anomaly_event")
 
     cycle_features = _build_cycle_features(cycles, usage, factory, batch_rate, station_rate)
     cell_features = _build_cell_features(cycle_features, usage, factory, failures, batch_rate, station_rate)

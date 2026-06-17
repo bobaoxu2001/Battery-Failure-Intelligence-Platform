@@ -48,7 +48,7 @@ def _build_dimensions(conn: sqlite3.Connection, factory: pd.DataFrame, usage: pd
         .reset_index(drop=True)
     )
     conds["test_condition_id"] = conds.index + 1
-    conds["test_temperature"] = config.NOMINAL_VOLTAGE_V * 0 + 25.0  # nominal setpoint
+    conds["test_temperature"] = 25.0  # nominal acceptance-test setpoint (degC)
     cond_key = {(r.charge_current, r.discharge_current): r.test_condition_id for r in conds.itertuples()}
 
     # dim_cell
@@ -77,13 +77,16 @@ def _build_dimensions(conn: sqlite3.Connection, factory: pd.DataFrame, usage: pd
              len(dim_cell), len(dim_lot), len(dim_station), len(dim_test_condition))
 
 
-def _build_facts(conn: sqlite3.Connection, cycles: pd.DataFrame, usage: pd.DataFrame,
+def _build_facts(conn: sqlite3.Connection, cycles_path, usage: pd.DataFrame,
                  failures: pd.DataFrame) -> None:
-    cycles.to_sql("fact_cycle_measurements", conn, if_exists="append", index=False)
+    cycle_rows = 0
+    for chunk in pd.read_csv(cycles_path, chunksize=config.WAREHOUSE_LOAD_CHUNKSIZE):
+        chunk.to_sql("fact_cycle_measurements", conn, if_exists="append", index=False)
+        cycle_rows += len(chunk)
     usage.to_sql("fact_usage_profile", conn, if_exists="append", index=False)
     failures.to_sql("fact_failure_events", conn, if_exists="append", index=False)
     log.info("Loaded facts: cycle_measurements=%d usage=%d failure_events=%d",
-             len(cycles), len(usage), len(failures))
+             cycle_rows, len(usage), len(failures))
 
 
 def build_marts(conn: sqlite3.Connection) -> None:
@@ -92,21 +95,37 @@ def build_marts(conn: sqlite3.Connection) -> None:
     log.info("Rebuilt analytics marts")
 
 
+def _features_need_rebuild() -> bool:
+    """Return True when feature artifacts are missing or older than inputs."""
+    feature_paths = [config.CELL_FEATURES_CSV, config.CYCLE_FEATURES_CSV]
+    input_paths = [config.FACTORY_CSV, config.CYCLES_CSV, config.USAGE_CSV, config.FAILURES_CSV]
+    if not all(path.exists() for path in feature_paths):
+        return True
+    if not all(path.exists() for path in input_paths):
+        return False
+    newest_input = max(path.stat().st_mtime for path in input_paths)
+    oldest_feature = min(path.stat().st_mtime for path in feature_paths)
+    return oldest_feature < newest_input
+
+
 def build() -> None:
     """Full warehouse build from processed CSVs.
 
-    Feature tables are required by the marts; if they are missing (e.g. the
-    warehouse step runs before the feature step in the documented pipeline
-    order) they are built on demand so this step is self-sufficient.
+    Processed inputs and feature tables are required by the marts. They are
+    built on demand when missing or stale so this step is safe to run directly.
     """
     config.ensure_dirs()
-    if not config.CELL_FEATURES_CSV.exists() or not config.CYCLE_FEATURES_CSV.exists():
+    processed_inputs = [config.FACTORY_CSV, config.CYCLES_CSV, config.USAGE_CSV, config.FAILURES_CSV]
+    if not all(path.exists() for path in processed_inputs):
+        from src.ingest.load_raw_data import load
+        log.info("Processed tables missing - ingesting source data before the warehouse")
+        load()
+    if _features_need_rebuild():
         from src.features.build_features import build as build_features
-        log.info("Feature tables missing - building them before the warehouse")
+        log.info("Feature tables missing or stale - building them before the warehouse")
         build_features()
 
     factory = pd.read_csv(config.FACTORY_CSV)
-    cycles = pd.read_csv(config.CYCLES_CSV)
     usage = pd.read_csv(config.USAGE_CSV)
     failures = pd.read_csv(config.FAILURES_CSV)
     cell_features = pd.read_csv(config.CELL_FEATURES_CSV)
@@ -123,7 +142,7 @@ def build() -> None:
     with get_connection() as conn:
         execute_sql_file(conn, config.SQL_DIR / "create_schema.sql")
         _build_dimensions(conn, factory, usage)
-        _build_facts(conn, cycles, usage, failures)
+        _build_facts(conn, config.CYCLES_CSV, usage, failures)
         cell_features[stg_cols].to_sql("stg_cell_features", conn, if_exists="append", index=False)
         build_marts(conn)
         conn.commit()

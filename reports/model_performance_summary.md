@@ -9,20 +9,20 @@ _Generated: 2026-06-17 • all data synthetic; no Apple confidential data used._
 
 | Metric | Value |
 | --- | --- |
-| MAE  | 0.0100 |
-| RMSE | 0.0150 |
-| R²   | 0.955 |
+| MAE  | 0.0107 |
+| RMSE | 0.0160 |
+| R²   | 0.948 |
 
 Top drivers (permutation_importance):
 
 | Feature | Importance |
 | --- | --- |
-| `rolling_resistance_mean_10` | 0.6578 |
-| `cycle_count` | 0.2791 |
-| `resistance_growth_rate` | 0.0514 |
-| `fast_charge_ratio` | 0.0298 |
-| `batch_failure_rate` | 0.0118 |
-| `high_temp_exposure_hours` | 0.0071 |
+| `rolling_resistance_mean_10` | 0.6537 |
+| `cycle_count` | 0.2731 |
+| `resistance_growth_rate` | 0.0794 |
+| `fast_charge_ratio` | 0.0313 |
+| `high_temp_exposure_hours` | 0.0058 |
+| `rolling_temperature_max_10` | 0.0038 |
 
 ## 2. Remaining Useful Life (RUL) regression
 - **Algorithm:** GradientBoosting
@@ -31,20 +31,20 @@ Top drivers (permutation_importance):
 
 | Metric | Value |
 | --- | --- |
-| MAE  | 46.0 cycles |
-| RMSE | 69.4 cycles |
-| R²   | 0.928 |
+| MAE  | 46.1 cycles |
+| RMSE | 70.1 cycles |
+| R²   | 0.926 |
 
 Top drivers (permutation_importance):
 
 | Feature | Importance |
 | --- | --- |
-| `soh_current` | 0.7579 |
-| `capacity_fade_rate` | 0.0865 |
-| `resistance_growth_rate` | 0.0849 |
-| `fast_charge_ratio` | 0.0513 |
-| `batch_failure_rate` | 0.0165 |
-| `high_temp_exposure_hours` | 0.0063 |
+| `soh_current` | 0.7839 |
+| `capacity_fade_rate` | 0.0941 |
+| `resistance_growth_rate` | 0.0921 |
+| `fast_charge_ratio` | 0.0643 |
+| `station_anomaly_rate` | 0.0043 |
+| `batch_failure_rate` | 0.0043 |
 
 ## 3. Failure-risk classification
 - **Algorithm:** LogisticRegression
@@ -69,12 +69,12 @@ Top drivers (permutation_importance):
 
 | Feature | Importance |
 | --- | --- |
-| `capacity_fade_rate` | 0.1400 |
-| `station_anomaly_rate` | 0.0733 |
+| `capacity_fade_rate` | 0.1367 |
 | `final_soh` | 0.0700 |
-| `mean_temperature_max` | 0.0433 |
+| `station_anomaly_rate` | 0.0700 |
+| `mean_temperature_max` | 0.0400 |
 | `peak_temperature_max` | 0.0167 |
-| `avg_depth_of_discharge` | 0.0167 |
+| `resistance_growth_rate` | 0.0133 |
 
 ## 4. Leading drivers of high-risk degradation
 Across the failure classifier, the dominant degradation drivers are the

@@ -27,8 +27,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Lint (perl syntax check)
-        run: perl -c scripts/parse_raw_logs.pl
+      - name: Static syntax checks
+        run: |
+          LC_ALL=C LANG=C perl -c scripts/parse_raw_logs.pl
+          bash -n scripts/run_daily_pipeline.sh
+          bash -n scripts/validate_files.sh
+          bash -n scripts/sql_export.sh
+          bash -n scripts/check_data_source_connectivity.sh
+          bash -n scripts/run_real_data_validation.sh
+          python -m compileall -q src tests
 
       - name: Pipeline smoke test (quick mode)
         run: bash scripts/run_daily_pipeline.sh

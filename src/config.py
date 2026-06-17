@@ -20,6 +20,13 @@ RAW_DIR = DATA_DIR / "raw"
 SYNTHETIC_DIR = DATA_DIR / "synthetic"
 PROCESSED_DIR = DATA_DIR / "processed"
 MODELS_DIR = PROCESSED_DIR / "models"
+PUBLIC_RAW_DIR = RAW_DIR / "public"
+NASA_PROCESSED_CSV_DIR = PUBLIC_RAW_DIR / "nasa_processed_csv"
+PUBLIC_SAMPLE_DIR = DATA_DIR / "public_samples"
+# Official NASA PCoE archive (the original .mat zips, ~200MB). Present on the
+# author's machine; gitignored. When absent, the real-data layer falls back to
+# the processed-CSV mirror and finally the committed bundled sample.
+NASA_OFFICIAL_ARCHIVE_DIR = RAW_DIR / "5. Battery Data Set"
 
 SQL_DIR = ROOT / "sql"
 REPORTS_DIR = ROOT / "reports"
@@ -39,10 +46,22 @@ FAILURES_CSV = PROCESSED_DIR / "failure_events.csv"
 CYCLE_FEATURES_CSV = PROCESSED_DIR / "cycle_features.csv"
 CELL_FEATURES_CSV = PROCESSED_DIR / "cell_features.csv"
 PREDICTIONS_CSV = PROCESSED_DIR / "model_predictions.csv"
+NASA_REAL_CYCLE_SUMMARY_CSV = PROCESSED_DIR / "nasa_real_cycle_summary.csv"
+NASA_REAL_SAMPLE_CSV = PUBLIC_SAMPLE_DIR / "nasa_real_cycle_summary_sample.csv"
+# Canonical NASA cells used for the default real-data validation + bundled sample.
+NASA_DEFAULT_BATTERY_IDS = ["B0005", "B0006", "B0007", "B0018"]
 
 # Raw telemetry log used to demonstrate the Unix/Perl ingest path.
 RAW_LOG_FILE = RAW_DIR / "raw_battery_test_logs.txt"
 PARSED_LOG_CSV = PROCESSED_DIR / "parsed_raw_logs.csv"
+
+# Hiring-manager-facing analytic outputs.
+JMP_ANALYSIS_CSV = REPORTS_DIR / "jmp_cell_analysis.csv"
+JMP_SCRIPT = REPORTS_DIR / "jmp_battery_analysis.jsl"
+MODEL_MONITORING_METRICS_CSV = REPORTS_DIR / "model_monitoring_metrics.csv"
+MODEL_MONITORING_REPORT = REPORTS_DIR / "model_monitoring_summary.md"
+PROJECT_READINESS_SCORECARD = REPORTS_DIR / "project_readiness_scorecard.md"
+REAL_DATA_VALIDATION_REPORT = REPORTS_DIR / "real_data_validation_summary.md"
 
 # --------------------------------------------------------------------------- #
 # Reproducibility / scale
@@ -90,6 +109,10 @@ RISK_TIER_THRESHOLDS = {
 # Test split fraction (cells are split, not rows, to avoid leakage).
 TEST_SIZE = 0.25
 
+# Chunk size for warehouse fact loading. This keeps the code path realistic for
+# large cycler exports while staying fast on the synthetic portfolio dataset.
+WAREHOUSE_LOAD_CHUNKSIZE = int(os.getenv("BFI_WAREHOUSE_CHUNKSIZE", "20000"))
+
 # Columns that every escalation row must carry (used by tests + reports).
 ESCALATION_COLUMNS = [
     "cell_id",
@@ -107,6 +130,9 @@ def ensure_dirs() -> None:
     """Create every directory the pipeline writes to (idempotent)."""
     for path in (
         RAW_DIR,
+        PUBLIC_RAW_DIR,
+        NASA_PROCESSED_CSV_DIR,
+        PUBLIC_SAMPLE_DIR,
         SYNTHETIC_DIR,
         PROCESSED_DIR,
         MODELS_DIR,

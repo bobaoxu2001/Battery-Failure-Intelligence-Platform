@@ -8,21 +8,21 @@ _Generated: 2026-06-17 • synthetic data; no Apple confidential data used._
 
 | Cell | Lot | Station | Risk | Fail prob | Pred SOH | Rem. cycles | Likely root cause | Recommended follow-up |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| CELL-00032 | LOT-009 | ST-08 | Critical | 1.000 | 0.659 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00069 | LOT-001 | ST-06 | Critical | 1.000 | 0.626 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00074 | LOT-009 | ST-05 | Critical | 1.000 | 0.769 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00049 | LOT-003 | ST-01 | Critical | 0.998 | 0.713 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00060 | LOT-008 | ST-05 | Critical | 0.997 | 0.834 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00090 | LOT-001 | ST-01 | Critical | 0.996 | 0.725 | 5 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00037 | LOT-008 | ST-04 | Critical | 0.996 | 0.791 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00027 | LOT-009 | ST-08 | Critical | 0.996 | 0.748 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00003 | LOT-010 | ST-01 | Critical | 0.986 | 0.723 | 0 | Low state of health | Prioritise for replacement; confirm capacity with reference performance test. |
-| CELL-00014 | LOT-009 | ST-02 | Critical | 0.986 | 0.771 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00051 | LOT-008 | ST-04 | Critical | 0.983 | 0.805 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00045 | LOT-011 | ST-07 | Critical | 0.979 | 0.767 | 0 | Test-station anomaly signal | Re-test on a reference station; audit station calibration drift. |
-| CELL-00102 | LOT-001 | ST-05 | Critical | 0.947 | 0.768 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
-| CELL-00117 | LOT-006 | ST-04 | Critical | 0.945 | 0.789 | 13 | Sustained thermal exposure | Review duty cycle thermal load; validate temperature sensor calibration. |
-| CELL-00019 | LOT-011 | ST-02 | Critical | 0.939 | 0.760 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00032 | LOT-009 | ST-08 | Critical | 1.000 | 0.661 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00069 | LOT-001 | ST-06 | Critical | 1.000 | 0.627 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00074 | LOT-009 | ST-05 | Critical | 1.000 | 0.753 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00049 | LOT-003 | ST-01 | Critical | 0.998 | 0.714 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00060 | LOT-008 | ST-05 | Critical | 0.998 | 0.832 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00090 | LOT-001 | ST-01 | Critical | 0.996 | 0.748 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00037 | LOT-008 | ST-04 | Critical | 0.995 | 0.795 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00027 | LOT-009 | ST-08 | Critical | 0.995 | 0.766 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00003 | LOT-010 | ST-01 | Critical | 0.987 | 0.725 | 0 | Low state of health | Prioritise for replacement; confirm capacity with reference performance test. |
+| CELL-00014 | LOT-009 | ST-02 | Critical | 0.986 | 0.764 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00051 | LOT-008 | ST-04 | Critical | 0.983 | 0.808 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00045 | LOT-011 | ST-07 | Critical | 0.977 | 0.785 | 3 | Test-station anomaly signal | Re-test on a reference station; audit station calibration drift. |
+| CELL-00102 | LOT-001 | ST-05 | Critical | 0.944 | 0.777 | 0 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00019 | LOT-011 | ST-02 | Critical | 0.939 | 0.763 | 8 | Accelerated capacity fade | Pull cell for teardown; check anode lithium plating and electrolyte loss. |
+| CELL-00117 | LOT-006 | ST-04 | Critical | 0.939 | 0.783 | 11 | Sustained thermal exposure | Review duty cycle thermal load; validate temperature sensor calibration. |
 
 ## Lots with the most escalations
 

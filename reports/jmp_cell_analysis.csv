@@ -1,0 +1,121 @@
+cell_id,lot_id,batch_id,station_id,usage_profile,cycle_count,last_soh,predicted_soh,predicted_remaining_cycles,failure_probability,risk_tier,top_risk_driver,capacity_fade_rate,resistance_growth_rate,peak_temperature_max,escalation_required,failure_severity
+CELL-00032,LOT-009,LOT-009-B2,ST-08,thermal_stress,520,0.5444,0.6606,0.0,1.0,Critical,Accelerated capacity fade,0.000876,0.005989,53.98,1,critical
+CELL-00069,LOT-001,LOT-001-B4,ST-06,thermal_stress,568,0.5919,0.6267,0.0,1.0,Critical,Accelerated capacity fade,0.000718,0.004999,52.95,1,critical
+CELL-00074,LOT-009,LOT-009-B4,ST-05,thermal_stress,302,0.7891,0.7535,0.0,0.9997,Critical,Accelerated capacity fade,0.000698,0.00562,49.88,1,critical
+CELL-00049,LOT-003,LOT-003-B4,ST-01,thermal_stress,550,0.7011,0.7135,0.0,0.9979,Critical,Accelerated capacity fade,0.000543,0.003792,53.36,1,critical
+CELL-00060,LOT-008,LOT-008-B5,ST-05,thermal_stress,292,0.8125,0.8316,0.0,0.9976,Critical,Accelerated capacity fade,0.000642,0.003696,49.71,1,critical
+CELL-00090,LOT-001,LOT-001-B5,ST-01,fast_charge_heavy,362,0.7875,0.7483,0.0,0.996,Critical,Accelerated capacity fade,0.000587,0.010443,44.34,1,critical
+CELL-00037,LOT-008,LOT-008-B2,ST-04,thermal_stress,353,0.7749,0.7946,0.0,0.9954,Critical,Accelerated capacity fade,0.000638,0.003951,58.2,1,critical
+CELL-00027,LOT-009,LOT-009-B2,ST-08,fast_charge_heavy,383,0.7582,0.7657,0.0,0.9952,Critical,Accelerated capacity fade,0.000631,0.006663,45.13,1,high
+CELL-00003,LOT-010,LOT-010-B3,ST-01,thermal_stress,619,0.7113,0.725,0.0,0.9868,Critical,Low state of health,0.000466,0.003309,53.22,1,critical
+CELL-00014,LOT-009,LOT-009-B4,ST-02,heavy,414,0.7415,0.7637,0.0,0.9855,Critical,Accelerated capacity fade,0.000624,0.003881,42.77,1,high
+CELL-00051,LOT-008,LOT-008-B1,ST-04,fast_charge_heavy,326,0.8094,0.8084,0.0,0.983,Critical,Accelerated capacity fade,0.000585,0.005792,50.22,1,critical
+CELL-00045,LOT-011,LOT-011-B5,ST-07,thermal_stress,626,0.6908,0.7851,2.9,0.9765,Critical,Test-station anomaly signal,0.000494,0.002898,63.39,1,critical
+CELL-00102,LOT-001,LOT-001-B2,ST-05,heavy,406,0.7581,0.7766,0.0,0.9442,Critical,Accelerated capacity fade,0.000596,0.003987,43.92,1,high
+CELL-00019,LOT-011,LOT-011-B4,ST-02,fast_charge_heavy,572,0.7389,0.763,8.4,0.9389,Critical,Accelerated capacity fade,0.000456,0.004109,45.15,1,high
+CELL-00117,LOT-006,LOT-006-B2,ST-04,thermal_stress,518,0.7845,0.7832,11.4,0.9386,Critical,Sustained thermal exposure,0.000416,0.002694,61.56,0,medium
+CELL-00083,LOT-007,LOT-007-B3,ST-02,thermal_stress,282,0.8573,0.8781,125.8,0.9187,Critical,Accelerated capacity fade,0.000506,0.002223,47.95,1,high
+CELL-00030,LOT-003,LOT-003-B5,ST-01,thermal_stress,287,0.8643,0.8695,145.7,0.9132,Critical,Accelerated capacity fade,0.000473,0.002519,48.75,1,critical
+CELL-00041,LOT-010,LOT-010-B1,ST-03,fast_charge_heavy,636,0.7182,0.7724,10.1,0.906,Critical,Low state of health,0.000443,0.004248,49.56,1,critical
+CELL-00070,LOT-002,LOT-002-B5,ST-04,thermal_stress,476,0.7992,0.8154,15.1,0.8517,Critical,Sustained thermal exposure,0.000422,0.002352,60.32,1,critical
+CELL-00002,LOT-010,LOT-010-B2,ST-01,thermal_stress,344,0.8414,0.857,76.2,0.8497,Critical,Accelerated capacity fade,0.000461,0.001828,50.15,1,critical
+CELL-00095,LOT-004,LOT-004-B5,ST-03,thermal_stress,276,0.8584,0.8678,110.8,0.8302,Critical,Accelerated capacity fade,0.000513,0.002704,49.5,1,critical
+CELL-00007,LOT-006,LOT-006-B2,ST-06,thermal_stress,415,0.8348,0.8367,82.9,0.8183,Critical,Accelerated capacity fade,0.000398,0.002393,49.59,0,medium
+CELL-00067,LOT-007,LOT-007-B2,ST-04,thermal_stress,497,0.8047,0.8022,21.7,0.8147,Critical,Sustained thermal exposure,0.000393,0.002799,59.05,0,medium
+CELL-00068,LOT-007,LOT-007-B3,ST-06,thermal_stress,349,0.8551,0.8603,132.9,0.8087,Critical,Accelerated capacity fade,0.000415,0.002312,49.62,1,critical
+CELL-00058,LOT-010,LOT-010-B3,ST-03,thermal_stress,438,0.8173,0.8299,46.3,0.7479,High,Accelerated capacity fade,0.000417,0.002429,49.74,1,critical
+CELL-00120,LOT-003,LOT-003-B5,ST-05,fast_charge_heavy,599,0.7741,0.767,17.5,0.7347,High,Low state of health,0.000377,0.006882,46.43,1,high
+CELL-00044,LOT-010,LOT-010-B4,ST-06,thermal_stress,277,0.8856,0.9008,196.8,0.7102,High,Accelerated capacity fade,0.000413,0.001958,48.29,1,high
+CELL-00034,LOT-006,LOT-006-B4,ST-08,thermal_stress,468,0.8287,0.8301,81.2,0.6818,High,Sustained thermal exposure,0.000366,0.0021,51.68,0,medium
+CELL-00116,LOT-005,LOT-005-B1,ST-04,fast_charge_heavy,567,0.7748,0.7791,15.2,0.6806,High,Test-station anomaly signal,0.000397,0.00421,52.27,0,medium
+CELL-00085,LOT-002,LOT-002-B5,ST-02,thermal_stress,405,0.8491,0.8436,146.4,0.6285,High,Sustained thermal exposure,0.000372,0.002607,48.31,0,medium
+CELL-00035,LOT-002,LOT-002-B5,ST-04,thermal_stress,439,0.8385,0.8293,95.1,0.6277,High,Sustained thermal exposure,0.000368,0.002592,56.9,0,medium
+CELL-00100,LOT-003,LOT-003-B5,ST-03,heavy,384,0.8397,0.8327,105.5,0.5278,Medium,Accelerated capacity fade,0.000417,0.002622,43.21,0,low
+CELL-00053,LOT-010,LOT-010-B3,ST-02,fast_charge_heavy,549,0.7718,0.7816,10.6,0.4587,Medium,Low state of health,0.000416,0.003684,45.96,0,low
+CELL-00094,LOT-003,LOT-003-B4,ST-02,heavy,469,0.8177,0.822,42.0,0.4366,Medium,Accelerated capacity fade,0.000389,0.002133,42.63,0,low
+CELL-00087,LOT-010,LOT-010-B2,ST-06,heavy,601,0.7535,0.7626,5.7,0.4026,Medium,Low state of health,0.00041,0.001957,44.08,1,high
+CELL-00040,LOT-004,LOT-004-B5,ST-08,heavy,528,0.7857,0.8087,22.2,0.3889,Medium,Low state of health,0.000406,0.0021,45.96,0,low
+CELL-00103,LOT-011,LOT-011-B3,ST-03,heavy,457,0.8123,0.8398,26.4,0.3832,Medium,Accelerated capacity fade,0.000411,0.001937,44.69,0,medium
+CELL-00042,LOT-010,LOT-010-B2,ST-07,fast_charge_heavy,346,0.8548,0.8716,149.0,0.3626,Medium,Test-station anomaly signal,0.00042,0.00326,56.58,0,medium
+CELL-00013,LOT-012,LOT-012-B3,ST-08,fast_charge_heavy,251,0.8946,0.8705,222.9,0.3531,Medium,Accelerated capacity fade,0.00042,0.005461,44.21,0,medium
+CELL-00033,LOT-012,LOT-012-B3,ST-03,fast_charge_heavy,530,0.7933,0.8062,15.0,0.3353,Medium,Low state of health,0.00039,0.002749,47.36,0,low
+CELL-00055,LOT-010,LOT-010-B5,ST-06,thermal_stress,322,0.8762,0.8773,193.3,0.3184,Medium,Sustained thermal exposure,0.000385,0.002595,51.91,0,medium
+CELL-00062,LOT-009,LOT-009-B2,ST-02,normal,616,0.7571,0.7738,0.0,0.2676,Low,Low state of health,0.000394,0.002172,41.19,0,low
+CELL-00105,LOT-012,LOT-012-B5,ST-02,fast_charge_heavy,331,0.8656,0.8521,171.8,0.2671,Low,Accelerated capacity fade,0.000406,0.003676,43.08,0,low
+CELL-00079,LOT-001,LOT-001-B4,ST-07,normal,611,0.7568,0.7591,9.6,0.2587,Low,Test-station anomaly signal,0.000398,0.00285,49.5,0,medium
+CELL-00118,LOT-010,LOT-010-B3,ST-08,heavy,618,0.7932,0.8016,29.8,0.2274,Low,Low state of health,0.000335,0.002054,45.97,0,low
+CELL-00099,LOT-001,LOT-001-B4,ST-04,normal,618,0.7745,0.7877,21.2,0.1961,Low,Test-station anomaly signal,0.000365,0.003042,47.74,0,low
+CELL-00011,LOT-009,LOT-009-B1,ST-08,normal,582,0.768,0.7713,15.8,0.1887,Low,Low state of health,0.000399,0.003135,41.37,0,low
+CELL-00080,LOT-010,LOT-010-B5,ST-04,fast_charge_heavy,266,0.8921,0.8843,238.7,0.1828,Low,Test-station anomaly signal,0.000405,0.00329,48.76,0,medium
+CELL-00101,LOT-010,LOT-010-B1,ST-05,fast_charge_heavy,574,0.7994,0.7895,29.3,0.1785,Low,Low state of health,0.00035,0.003653,47.31,0,low
+CELL-00038,LOT-009,LOT-009-B3,ST-03,normal,543,0.7786,0.7919,17.3,0.1755,Low,Low state of health,0.000408,0.002642,41.33,0,medium
+CELL-00005,LOT-005,LOT-005-B5,ST-07,fast_charge_heavy,383,0.863,0.8515,170.8,0.1699,Low,Test-station anomaly signal,0.000358,0.003302,57.48,0,medium
+CELL-00096,LOT-005,LOT-005-B1,ST-08,fast_charge_heavy,424,0.8558,0.8448,150.7,0.1459,Low,Internal resistance growth,0.00034,0.003543,45.89,0,low
+CELL-00077,LOT-011,LOT-011-B2,ST-06,heavy,524,0.8149,0.8196,41.1,0.1432,Low,Low state of health,0.000353,0.002129,44.1,0,low
+CELL-00050,LOT-009,LOT-009-B5,ST-01,normal,572,0.7741,0.777,7.6,0.1359,Low,Low state of health,0.000395,0.003068,40.13,0,low
+CELL-00076,LOT-006,LOT-006-B1,ST-06,heavy,587,0.7957,0.809,48.5,0.1333,Low,Low state of health,0.000348,0.001554,44.14,0,low
+CELL-00065,LOT-007,LOT-007-B5,ST-01,heavy,416,0.8467,0.8502,129.3,0.1111,Low,Accelerated capacity fade,0.000369,0.002061,42.19,0,medium
+CELL-00004,LOT-003,LOT-003-B4,ST-01,heavy,579,0.7797,0.7884,4.7,0.1029,Low,Low state of health,0.00038,0.001898,45.84,0,low
+CELL-00031,LOT-007,LOT-007-B1,ST-03,fast_charge_heavy,295,0.8921,0.8824,256.2,0.0892,Low,Accelerated capacity fade,0.000366,0.003147,43.78,0,low
+CELL-00059,LOT-010,LOT-010-B4,ST-07,fast_charge_heavy,267,0.9035,0.8969,292.2,0.0879,Low,Test-station anomaly signal,0.000361,0.003201,53.31,0,medium
+CELL-00081,LOT-007,LOT-007-B1,ST-07,heavy,499,0.8087,0.8105,18.9,0.0871,Low,Test-station anomaly signal,0.000383,0.002062,53.14,0,high
+CELL-00021,LOT-001,LOT-001-B1,ST-02,normal,490,0.8158,0.8192,36.7,0.0822,Low,Low state of health,0.000376,0.002646,37.91,0,low
+CELL-00057,LOT-010,LOT-010-B2,ST-06,heavy,618,0.7919,0.8045,31.0,0.0787,Low,Low state of health,0.000337,0.002036,46.61,0,low
+CELL-00010,LOT-002,LOT-002-B5,ST-02,heavy,625,0.8156,0.8131,69.2,0.0736,Low,Low state of health,0.000295,0.00199,43.65,0,low
+CELL-00012,LOT-009,LOT-009-B2,ST-05,normal,548,0.7997,0.7859,21.3,0.0671,Low,Low state of health,0.000366,0.003036,40.21,0,low
+CELL-00008,LOT-001,LOT-001-B3,ST-04,normal,319,0.8778,0.8874,163.5,0.0635,Low,Test-station anomaly signal,0.000383,0.002093,47.02,0,low
+CELL-00114,LOT-008,LOT-008-B4,ST-04,normal,512,0.836,0.8242,112.9,0.0536,Low,Test-station anomaly signal,0.00032,0.002364,51.1,0,medium
+CELL-00039,LOT-002,LOT-002-B4,ST-07,heavy,645,0.7968,0.8071,50.3,0.0442,Low,Test-station anomaly signal,0.000315,0.001905,54.51,0,medium
+CELL-00073,LOT-006,LOT-006-B3,ST-02,heavy,483,0.8457,0.8407,145.7,0.0408,Low,Deep discharge cycling,0.00032,0.002011,41.65,0,low
+CELL-00026,LOT-002,LOT-002-B1,ST-03,heavy,460,0.8598,0.8418,170.2,0.0243,Low,Deep discharge cycling,0.000305,0.001852,43.67,0,low
+CELL-00025,LOT-006,LOT-006-B5,ST-05,heavy,451,0.8578,0.8468,188.2,0.0238,Low,Deep discharge cycling,0.000315,0.001771,44.04,0,low
+CELL-00066,LOT-006,LOT-006-B1,ST-07,heavy,419,0.863,0.8794,232.3,0.0226,Low,Test-station anomaly signal,0.000327,0.00139,52.62,0,medium
+CELL-00001,LOT-009,LOT-009-B1,ST-03,normal,404,0.845,0.8676,135.0,0.0221,Low,Accelerated capacity fade,0.000384,0.00182,40.74,0,low
+CELL-00056,LOT-001,LOT-001-B1,ST-02,normal,399,0.8584,0.8531,161.2,0.0206,Low,Deep discharge cycling,0.000355,0.002352,37.09,0,low
+CELL-00075,LOT-008,LOT-008-B5,ST-01,normal,532,0.8203,0.8127,54.8,0.0199,Low,Low state of health,0.000338,0.002201,41.89,0,low
+CELL-00022,LOT-006,LOT-006-B2,ST-03,heavy,265,0.9152,0.9194,387.8,0.0171,Low,Deep discharge cycling,0.00032,0.001421,43.95,0,low
+CELL-00082,LOT-008,LOT-008-B2,ST-01,normal,585,0.8223,0.8129,78.1,0.017,Low,Low state of health,0.000304,0.002352,40.48,0,low
+CELL-00006,LOT-006,LOT-006-B1,ST-06,heavy,583,0.8348,0.8171,111.4,0.0148,Low,Deep discharge cycling,0.000283,0.001785,45.73,0,low
+CELL-00113,LOT-012,LOT-012-B3,ST-03,heavy,316,0.8948,0.8772,251.0,0.0128,Low,Deep discharge cycling,0.000333,0.001902,43.27,0,low
+CELL-00017,LOT-005,LOT-005-B2,ST-04,normal,611,0.8434,0.8529,160.6,0.0096,Low,Test-station anomaly signal,0.000256,0.001636,48.58,0,medium
+CELL-00089,LOT-008,LOT-008-B4,ST-06,normal,472,0.8516,0.8426,184.9,0.0069,Low,Deep discharge cycling,0.000314,0.002162,38.03,0,low
+CELL-00020,LOT-005,LOT-005-B5,ST-04,normal,557,0.842,0.8412,169.2,0.0067,Low,Test-station anomaly signal,0.000284,0.001583,49.18,0,medium
+CELL-00028,LOT-006,LOT-006-B3,ST-01,heavy,400,0.8795,0.8839,246.1,0.0066,Low,Deep discharge cycling,0.000301,0.001637,42.62,0,low
+CELL-00108,LOT-008,LOT-008-B3,ST-04,normal,279,0.9106,0.9021,328.7,0.0064,Low,Test-station anomaly signal,0.000321,0.001935,43.54,0,low
+CELL-00015,LOT-005,LOT-005-B5,ST-04,normal,440,0.8858,0.8967,330.5,0.0044,Low,Test-station anomaly signal,0.00026,0.00149,46.95,0,low
+CELL-00119,LOT-004,LOT-004-B4,ST-02,normal,492,0.8827,0.8783,356.2,0.0042,Low,High cumulative cycle count,0.000238,0.001649,40.35,0,low
+CELL-00088,LOT-004,LOT-004-B3,ST-02,normal,588,0.8568,0.8505,247.5,0.0041,Low,High cumulative cycle count,0.000244,0.001513,40.82,0,low
+CELL-00071,LOT-003,LOT-003-B1,ST-03,normal,608,0.8435,0.8306,180.4,0.004,Low,High cumulative cycle count,0.000257,0.001593,43.53,0,low
+CELL-00043,LOT-006,LOT-006-B3,ST-03,normal,577,0.8466,0.8783,230.4,0.0036,Low,Deep discharge cycling,0.000266,0.00122,41.39,0,medium
+CELL-00024,LOT-003,LOT-003-B4,ST-06,normal,384,0.8905,0.895,331.9,0.0029,Low,Deep discharge cycling,0.000285,0.001586,38.08,0,low
+CELL-00048,LOT-004,LOT-004-B3,ST-03,normal,547,0.876,0.8733,335.7,0.0025,Low,High cumulative cycle count,0.000227,0.001557,41.88,0,low
+CELL-00106,LOT-004,LOT-004-B1,ST-08,normal,343,0.916,0.9133,520.4,0.0021,Low,Accelerated capacity fade,0.000245,0.001205,39.75,0,low
+CELL-00098,LOT-011,LOT-011-B3,ST-05,normal,449,0.899,0.8821,378.8,0.0018,Low,High-temperature field exposure,0.000225,0.0017,40.36,0,low
+CELL-00097,LOT-012,LOT-012-B2,ST-08,normal,624,0.8613,0.8557,241.4,0.0017,Low,High cumulative cycle count,0.000222,0.001522,42.75,0,low
+CELL-00091,LOT-005,LOT-005-B1,ST-02,normal,529,0.8826,0.8569,349.4,0.0017,Low,Deep discharge cycling,0.000222,0.001648,39.25,0,low
+CELL-00104,LOT-004,LOT-004-B4,ST-01,normal,620,0.8499,0.8584,220.2,0.0015,Low,High cumulative cycle count,0.000242,0.001287,42.94,0,low
+CELL-00054,LOT-003,LOT-003-B4,ST-04,normal,516,0.8737,0.8679,292.8,0.0013,Low,Test-station anomaly signal,0.000245,0.001513,47.87,0,low
+CELL-00109,LOT-002,LOT-002-B4,ST-04,normal,303,0.9269,0.947,559.5,0.0013,Low,Test-station anomaly signal,0.000241,0.00104,45.91,0,low
+CELL-00086,LOT-007,LOT-007-B1,ST-03,normal,330,0.9242,0.9289,538.2,0.0012,Low,Accelerated capacity fade,0.00023,0.001368,39.08,0,low
+CELL-00078,LOT-007,LOT-007-B3,ST-01,normal,466,0.8889,0.8997,409.1,0.0011,Low,High cumulative cycle count,0.000239,0.001234,39.65,0,low
+CELL-00047,LOT-011,LOT-011-B2,ST-06,normal,588,0.8443,0.8462,186.1,0.001,Low,Deep discharge cycling,0.000265,0.001185,40.18,0,low
+CELL-00107,LOT-006,LOT-006-B2,ST-04,normal,450,0.9045,0.9124,492.3,0.001,Low,Test-station anomaly signal,0.000212,0.00132,48.6,0,medium
+CELL-00111,LOT-007,LOT-007-B1,ST-01,normal,575,0.8829,0.8802,447.3,0.0009,Low,High cumulative cycle count,0.000204,0.001341,42.19,0,low
+CELL-00052,LOT-002,LOT-002-B2,ST-08,normal,492,0.899,0.8805,514.4,0.0009,Low,Deep discharge cycling,0.000205,0.00147,39.51,0,low
+CELL-00023,LOT-010,LOT-010-B3,ST-06,normal,376,0.9139,0.9194,555.6,0.0009,Low,Accelerated capacity fade,0.000229,0.001347,38.53,0,low
+CELL-00112,LOT-010,LOT-010-B2,ST-01,normal,429,0.8982,0.9095,428.1,0.0008,Low,Accelerated capacity fade,0.000237,0.001156,39.14,0,low
+CELL-00018,LOT-004,LOT-004-B3,ST-04,normal,371,0.9141,0.9182,462.6,0.0008,Low,Test-station anomaly signal,0.000232,0.001459,44.75,0,low
+CELL-00016,LOT-012,LOT-012-B1,ST-06,normal,321,0.9251,0.9239,558.9,0.0008,Low,Accelerated capacity fade,0.000233,0.001154,38.01,0,low
+CELL-00029,LOT-004,LOT-004-B4,ST-03,normal,439,0.8946,0.903,427.9,0.0007,Low,Deep discharge cycling,0.00024,0.001204,41.16,0,low
+CELL-00036,LOT-010,LOT-010-B1,ST-06,normal,373,0.9159,0.9029,453.5,0.0006,Low,Accelerated capacity fade,0.000225,0.001531,39.17,0,low
+CELL-00061,LOT-006,LOT-006-B1,ST-05,normal,299,0.9389,0.9417,689.9,0.0006,Low,Accelerated capacity fade,0.000204,0.00101,38.31,0,low
+CELL-00009,LOT-007,LOT-007-B4,ST-06,normal,528,0.8894,0.8822,446.3,0.0005,Low,High cumulative cycle count,0.000209,0.001089,38.73,0,low
+CELL-00092,LOT-006,LOT-006-B2,ST-05,normal,324,0.9322,0.9252,612.2,0.0005,Low,Deep discharge cycling,0.000209,0.001078,37.74,0,low
+CELL-00093,LOT-012,LOT-012-B3,ST-07,normal,623,0.8812,0.8786,462.1,0.0004,Low,Test-station anomaly signal,0.000191,0.001325,49.23,0,medium
+CELL-00084,LOT-007,LOT-007-B4,ST-04,normal,473,0.9039,0.8909,490.7,0.0004,Low,Test-station anomaly signal,0.000203,0.001277,45.64,0,low
+CELL-00072,LOT-002,LOT-002-B2,ST-06,normal,320,0.9297,0.9268,625.9,0.0004,Low,Deep discharge cycling,0.00022,0.001282,38.11,0,low
+CELL-00063,LOT-004,LOT-004-B3,ST-04,normal,261,0.9474,0.9496,643.1,0.0004,Low,Test-station anomaly signal,0.000202,0.001062,45.16,0,low
+CELL-00115,LOT-005,LOT-005-B5,ST-06,normal,331,0.93,0.9341,679.9,0.0004,Low,High-temperature field exposure,0.000211,0.001221,37.37,0,low
+CELL-00064,LOT-010,LOT-010-B4,ST-07,normal,438,0.9023,0.9034,485.7,0.0003,Low,Test-station anomaly signal,0.000223,0.001279,50.2,0,medium
+CELL-00046,LOT-005,LOT-005-B1,ST-04,normal,346,0.93,0.9196,588.9,0.0003,Low,Test-station anomaly signal,0.000202,0.001391,48.01,0,medium
+CELL-00110,LOT-007,LOT-007-B5,ST-07,normal,405,0.9233,0.8923,583.6,0.0001,Low,Test-station anomaly signal,0.000189,0.001264,46.97,0,low

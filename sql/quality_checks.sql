@@ -39,6 +39,27 @@ FROM fact_usage_profile u
 LEFT JOIN dim_cell c ON c.cell_id = u.cell_id
 WHERE c.cell_id IS NULL;
 
+-- name: cell_missing_features (HARD)
+-- Every known cell must have one staged feature row for marts/model reporting.
+SELECT COUNT(*) AS offending
+FROM dim_cell c
+LEFT JOIN stg_cell_features f ON f.cell_id = c.cell_id
+WHERE f.cell_id IS NULL;
+
+-- name: feature_without_cell (HARD)
+-- Staged feature rows must map back to the conformed cell dimension.
+SELECT COUNT(*) AS offending
+FROM stg_cell_features f
+LEFT JOIN dim_cell c ON c.cell_id = f.cell_id
+WHERE c.cell_id IS NULL;
+
+-- name: prediction_without_cell (HARD)
+-- Model predictions must map back to the conformed cell dimension.
+SELECT COUNT(*) AS offending
+FROM fact_model_predictions p
+LEFT JOIN dim_cell c ON c.cell_id = p.cell_id
+WHERE c.cell_id IS NULL;
+
 -- name: soh_out_of_range (SOFT)
 -- Engineered SOH should sit in a plausible band [0.4, 1.05].
 SELECT COUNT(*) AS offending

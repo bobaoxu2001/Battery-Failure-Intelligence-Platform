@@ -1,33 +1,33 @@
 cell_id,lot_id,station_id,failure_probability,predicted_soh,predicted_remaining_cycles,likely_root_cause,recommended_follow_up
-CELL-00032,LOT-009,ST-08,1.0,0.6588,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00069,LOT-001,ST-06,1.0,0.6259,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00074,LOT-009,ST-05,0.9997,0.7688,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00049,LOT-003,ST-01,0.9978,0.7129,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00060,LOT-008,ST-05,0.9974,0.8342,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00090,LOT-001,ST-01,0.9964,0.7253,4.8,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00037,LOT-008,ST-04,0.996,0.7913,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00027,LOT-009,ST-08,0.9957,0.7476,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00003,LOT-010,ST-01,0.9856,0.7232,0.0,Low state of health (cell already below 80% SOH),Prioritise for replacement; confirm capacity with reference performance test.
-CELL-00014,LOT-009,ST-02,0.9855,0.7709,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00051,LOT-008,ST-04,0.9833,0.8054,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00045,LOT-011,ST-07,0.9794,0.767,0.0,Test-station anomaly signal (cell already below 80% SOH),Re-test on a reference station; audit station calibration drift.
-CELL-00102,LOT-001,ST-05,0.9474,0.7677,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00117,LOT-006,ST-04,0.9451,0.7886,12.9,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
-CELL-00019,LOT-011,ST-02,0.9385,0.7603,0.1,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00083,LOT-007,ST-02,0.926,0.8712,118.8,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00030,LOT-003,ST-01,0.91,0.8706,132.2,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00041,LOT-010,ST-03,0.893,0.7683,10.9,Low state of health (cell already below 80% SOH),Prioritise for replacement; confirm capacity with reference performance test.
-CELL-00070,LOT-002,ST-04,0.8614,0.8069,18.6,Sustained thermal exposure (cell already below 80% SOH),Review duty cycle thermal load; validate temperature sensor calibration.
-CELL-00002,LOT-010,ST-01,0.8404,0.8556,68.5,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00095,LOT-004,ST-03,0.8259,0.8676,110.5,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00067,LOT-007,ST-04,0.8251,0.8033,15.9,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
-CELL-00007,LOT-006,ST-06,0.8139,0.836,83.8,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
-CELL-00068,LOT-007,ST-06,0.8038,0.8586,126.8,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00058,LOT-010,ST-03,0.7399,0.8206,45.3,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00120,LOT-003,ST-05,0.7381,0.7652,15.4,Low state of health,Prioritise for replacement; confirm capacity with reference performance test.
-CELL-00044,LOT-010,ST-06,0.7056,0.8977,202.8,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
-CELL-00116,LOT-005,ST-04,0.677,0.7751,10.2,Test-station anomaly signal,Re-test on a reference station; audit station calibration drift.
-CELL-00034,LOT-006,ST-08,0.6516,0.8325,80.6,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
-CELL-00035,LOT-002,ST-04,0.6455,0.8249,84.6,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
-CELL-00085,LOT-002,ST-02,0.6021,0.8386,144.8,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
-CELL-00087,LOT-010,ST-06,0.4102,0.7611,7.8,Low state of health,Prioritise for replacement; confirm capacity with reference performance test.
+CELL-00032,LOT-009,ST-08,1.0,0.6606,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00069,LOT-001,ST-06,1.0,0.6267,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00074,LOT-009,ST-05,0.9997,0.7535,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00049,LOT-003,ST-01,0.9979,0.7135,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00060,LOT-008,ST-05,0.9976,0.8316,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00090,LOT-001,ST-01,0.996,0.7483,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00037,LOT-008,ST-04,0.9954,0.7946,0.0,Accelerated capacity fade (cell already below 80% SOH),Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00027,LOT-009,ST-08,0.9952,0.7657,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00003,LOT-010,ST-01,0.9868,0.725,0.0,Low state of health (cell already below 80% SOH),Prioritise for replacement; confirm capacity with reference performance test.
+CELL-00014,LOT-009,ST-02,0.9855,0.7637,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00051,LOT-008,ST-04,0.983,0.8084,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00045,LOT-011,ST-07,0.9765,0.7851,2.9,Test-station anomaly signal (cell already below 80% SOH),Re-test on a reference station; audit station calibration drift.
+CELL-00102,LOT-001,ST-05,0.9442,0.7766,0.0,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00019,LOT-011,ST-02,0.9389,0.763,8.4,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00117,LOT-006,ST-04,0.9386,0.7832,11.4,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
+CELL-00083,LOT-007,ST-02,0.9187,0.8781,125.8,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00030,LOT-003,ST-01,0.9132,0.8695,145.7,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00041,LOT-010,ST-03,0.906,0.7724,10.1,Low state of health (cell already below 80% SOH),Prioritise for replacement; confirm capacity with reference performance test.
+CELL-00070,LOT-002,ST-04,0.8517,0.8154,15.1,Sustained thermal exposure (cell already below 80% SOH),Review duty cycle thermal load; validate temperature sensor calibration.
+CELL-00002,LOT-010,ST-01,0.8497,0.857,76.2,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00095,LOT-004,ST-03,0.8302,0.8678,110.8,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00007,LOT-006,ST-06,0.8183,0.8367,82.9,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00067,LOT-007,ST-04,0.8147,0.8022,21.7,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
+CELL-00068,LOT-007,ST-06,0.8087,0.8603,132.9,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00058,LOT-010,ST-03,0.7479,0.8299,46.3,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00120,LOT-003,ST-05,0.7347,0.767,17.5,Low state of health,Prioritise for replacement; confirm capacity with reference performance test.
+CELL-00044,LOT-010,ST-06,0.7102,0.9008,196.8,Accelerated capacity fade,Pull cell for teardown; check anode lithium plating and electrolyte loss.
+CELL-00034,LOT-006,ST-08,0.6818,0.8301,81.2,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
+CELL-00116,LOT-005,ST-04,0.6806,0.7791,15.2,Test-station anomaly signal,Re-test on a reference station; audit station calibration drift.
+CELL-00085,LOT-002,ST-02,0.6285,0.8436,146.4,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
+CELL-00035,LOT-002,ST-04,0.6277,0.8293,95.1,Sustained thermal exposure,Review duty cycle thermal load; validate temperature sensor calibration.
+CELL-00087,LOT-010,ST-06,0.4026,0.7626,5.7,Low state of health,Prioritise for replacement; confirm capacity with reference performance test.

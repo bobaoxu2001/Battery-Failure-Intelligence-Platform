@@ -19,6 +19,13 @@ def _build_if_missing() -> None:
         config.WAREHOUSE_DB,
         config.PREDICTIONS_CSV,
         config.REPORTS_DIR / "escalation_report_sample.csv",
+        config.JMP_ANALYSIS_CSV,
+        config.JMP_SCRIPT,
+        config.MODEL_MONITORING_METRICS_CSV,
+        config.MODEL_MONITORING_REPORT,
+        config.NASA_REAL_CYCLE_SUMMARY_CSV,
+        config.REAL_DATA_VALIDATION_REPORT,
+        config.PROJECT_READINESS_SCORECARD,
     ]
     models = [
         config.MODELS_DIR / "soh_model.joblib",
@@ -35,7 +42,14 @@ def _build_if_missing() -> None:
     from src.models.train_rul_model import train as train_rul
     from src.models.train_failure_classifier import train as train_failure
     from src.models.score_cells import score
+    from src.models.monitor_drift import build_report as build_monitoring_report
+    from src.ingest.import_public_battery_data import (
+        build_real_cycle_summary,
+        build_report as build_real_data_report,
+    )
     from src.reporting.generate_escalation_report import generate as gen_escalation
+    from src.reporting.generate_jmp_exports import generate as gen_jmp_exports
+    from src.reporting.generate_project_scorecard import build_report as build_scorecard
 
     load()
     build_features()
@@ -46,6 +60,11 @@ def _build_if_missing() -> None:
         train_failure()
     score()
     gen_escalation()
+    gen_jmp_exports()
+    build_monitoring_report()
+    real_summary = build_real_cycle_summary()
+    build_real_data_report(real_summary)
+    build_scorecard()
 
 
 @pytest.fixture(scope="session", autouse=True)

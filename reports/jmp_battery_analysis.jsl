@@ -1,0 +1,40 @@
+// Battery Failure Intelligence - JMP starter analysis
+// Generated 2026-06-17; all data synthetic.
+// Save this script next to jmp_cell_analysis.csv, open it in JMP, then run it.
+
+Names Default To Here(1);
+
+dt = Open("jmp_cell_analysis.csv");
+
+dt << Distribution(
+    Continuous Distribution(Column(:predicted_soh)),
+    Continuous Distribution(Column(:predicted_remaining_cycles)),
+    Continuous Distribution(Column(:failure_probability)),
+    Nominal Distribution(Column(:risk_tier)),
+    Nominal Distribution(Column(:top_risk_driver))
+);
+
+dt << Graph Builder(
+    Size(1000, 620),
+    Show Control Panel(0),
+    Variables(
+        X(:predicted_remaining_cycles),
+        Y(:predicted_soh),
+        Color(:failure_probability),
+        Wrap(:risk_tier)
+    ),
+    Elements(Points(X, Y, Legend(9)))
+);
+
+dt << Fit Model(
+    Y(:failure_probability),
+    Effects(
+        :last_soh,
+        :capacity_fade_rate,
+        :resistance_growth_rate,
+        :peak_temperature_max,
+        :cycle_count
+    ),
+    Personality("Standard Least Squares"),
+    Run
+);

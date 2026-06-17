@@ -5,15 +5,19 @@
 # Steps:
 #   1.  Generate / ingest synthetic battery data
 #   2.  Parse raw telemetry logs (Perl) + validate files
-#   3.  Build the SQL warehouse
-#   4.  Run SQL data-quality checks
-#   5.  Build modeling features
-#   6.  Train (or reuse) ML models
-#   7.  Score all cells
-#   8.  Write predictions to the warehouse (done within scoring)
-#   9.  Generate the engineering escalation report
-#   10. Generate Tableau-ready dashboard extracts
-#   11. Generate the Markdown model-performance summary
+#   3.  Build modeling features
+#   4.  Build the SQL warehouse
+#   5.  Train (or reuse) ML models
+#   6.  Score all cells and write predictions to the warehouse
+#   7.  Run SQL data-quality checks
+#   8.  Generate the engineering escalation report
+#   9.  Generate Tableau-ready dashboard extracts
+#   10. Generate JMP-ready analysis files
+#   11. Generate model monitoring summary
+#   12. Generate the Markdown model-performance summary
+#   13. Generate public real-data validation
+#   14. Generate the project readiness scorecard
+#   15. Validate expected output files
 #
 # Usage:
 #   bash scripts/run_daily_pipeline.sh            # full run, reuse models if present
@@ -29,51 +33,78 @@ cd "${ROOT}"
 PY="${PYTHON:-python3}"
 RETRAIN="${RETRAIN:-0}"
 MODELS_DIR="data/processed/models"
+TOTAL_STEPS=15
 
-step() { printf "\n\033[1;34m=== [%s/11] %s ===\033[0m\n" "$1" "$2"; }
+step() { printf "\n\033[1;34m=== [%s/%s] %s ===\033[0m\n" "$1" "${TOTAL_STEPS}" "$2"; }
+models_ready() {
+    [[ -f "${MODELS_DIR}/soh_model.joblib" \
+        && -f "${MODELS_DIR}/rul_model.joblib" \
+        && -f "${MODELS_DIR}/failure_model.joblib" ]]
+}
+models_need_training() {
+    [[ "${RETRAIN}" == "1" ]] && return 0
+    models_ready || return 0
+    for feature in data/processed/cycle_features.csv data/processed/cell_features.csv; do
+        for model in "${MODELS_DIR}/soh_model.joblib" "${MODELS_DIR}/rul_model.joblib" "${MODELS_DIR}/failure_model.joblib"; do
+            [[ "${feature}" -nt "${model}" ]] && return 0
+        done
+    done
+    return 1
+}
 
 step 1 "Generate + ingest synthetic battery data"
 ${PY} -m src.ingest.load_raw_data
 
 step 2 "Parse raw telemetry (Perl) + validate files"
 if command -v perl >/dev/null 2>&1; then
-    perl scripts/parse_raw_logs.pl data/raw/raw_battery_test_logs.txt data/processed/parsed_raw_logs.csv
+    LC_ALL=C LANG=C perl scripts/parse_raw_logs.pl data/raw/raw_battery_test_logs.txt data/processed/parsed_raw_logs.csv
 else
     echo "  perl not found - skipping raw-log parse (non-fatal)"
 fi
 
-step 3 "Build SQL warehouse"
-${PY} -m src.warehouse.build_warehouse
-
-step 4 "Run SQL data-quality checks"
-${PY} -m src.warehouse.quality_checks
-
-step 5 "Build modeling features"
+step 3 "Build modeling features"
 ${PY} -m src.features.build_features
 
-step 6 "Train (or reuse) ML models"
-if [[ "${RETRAIN}" == "1" || ! -f "${MODELS_DIR}/soh_model.joblib" ]]; then
+step 4 "Build SQL warehouse"
+${PY} -m src.warehouse.build_warehouse
+
+step 5 "Train (or reuse) ML models"
+if models_need_training; then
     ${PY} -m src.models.train_soh_model
     ${PY} -m src.models.train_rul_model
     ${PY} -m src.models.train_failure_classifier
 else
-    echo "  Existing models found - reusing (set RETRAIN=1 to force retrain)"
+    echo "  Existing models are present and newer than feature tables - reusing"
 fi
 
-step 7 "Score all cells (8. writes predictions to warehouse)"
+step 6 "Score all cells and write predictions to warehouse"
 ${PY} -m src.models.score_cells
 
-step 9 "Generate engineering escalation report"
+step 7 "Run SQL data-quality checks"
+${PY} -m src.warehouse.quality_checks
+
+step 8 "Generate engineering escalation report"
 ${PY} -m src.reporting.generate_escalation_report
 
-step 10 "Generate Tableau-ready dashboard extracts"
+step 9 "Generate Tableau-ready dashboard extracts"
 ${PY} -m src.reporting.generate_tableau_extracts
 
-step 11 "Generate model-performance summary"
+step 10 "Generate JMP-ready analysis files"
+${PY} -m src.reporting.generate_jmp_exports
+
+step 11 "Generate model monitoring summary"
+${PY} -m src.models.monitor_drift
+
+step 12 "Generate model-performance summary"
 ${PY} -m src.models.evaluate_models
 
-echo
-echo "==> Final file validation"
+step 13 "Generate public real-data validation"
+${PY} -m src.ingest.import_public_battery_data
+
+step 14 "Generate project readiness scorecard"
+${PY} -m src.reporting.generate_project_scorecard
+
+step 15 "Validate expected output files"
 bash scripts/validate_files.sh
 
 printf "\n\033[1;32mPipeline complete.\033[0m Outputs in data/processed/, reports/, dashboards/\n"

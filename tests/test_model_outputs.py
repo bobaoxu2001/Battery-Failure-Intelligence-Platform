@@ -5,8 +5,10 @@ import pandas as pd
 import pytest
 
 from src import config
+from src.models.monitor_drift import population_stability_index, psi_status
 from src.models import _common as C
 from src.models.score_cells import risk_tier
+from src.reporting.generate_jmp_exports import JMP_COLUMNS
 
 
 @pytest.fixture(scope="module")
@@ -17,6 +19,16 @@ def predictions() -> pd.DataFrame:
 @pytest.fixture(scope="module")
 def escalation() -> pd.DataFrame:
     return pd.read_csv(config.REPORTS_DIR / "escalation_report_sample.csv")
+
+
+@pytest.fixture(scope="module")
+def jmp_export() -> pd.DataFrame:
+    return pd.read_csv(config.JMP_ANALYSIS_CSV)
+
+
+@pytest.fixture(scope="module")
+def monitoring_metrics() -> pd.DataFrame:
+    return pd.read_csv(config.MODEL_MONITORING_METRICS_CSV)
 
 
 # --- Prediction schema ------------------------------------------------------
@@ -76,6 +88,42 @@ def test_escalation_rows_have_root_cause_and_follow_up(escalation):
     assert escalation["likely_root_cause"].notna().all()
     assert escalation["recommended_follow_up"].notna().all()
     assert (escalation["recommended_follow_up"].str.len() > 0).all()
+
+
+# --- JMP / monitoring outputs ----------------------------------------------
+def test_jmp_export_has_expected_analysis_columns(jmp_export):
+    missing = [c for c in JMP_COLUMNS if c not in jmp_export.columns]
+    assert not missing, f"JMP export missing columns: {missing}"
+    assert jmp_export["cell_id"].is_unique
+
+
+def test_jmp_script_references_export_and_analysis_platforms():
+    text = config.JMP_SCRIPT.read_text(encoding="utf-8")
+    assert "jmp_cell_analysis.csv" in text
+    assert "Distribution(" in text
+    assert "Fit Model(" in text
+
+
+def test_monitoring_metrics_have_psi_status(monitoring_metrics):
+    required = {"feature", "reference_mean", "current_mean", "delta", "psi", "status"}
+    assert required.issubset(monitoring_metrics.columns)
+    assert monitoring_metrics["status"].isin({"ok", "watch", "alert", "unknown"}).all()
+
+
+def test_project_readiness_scorecard_is_complete():
+    text = config.PROJECT_READINESS_SCORECARD.read_text(encoding="utf-8")
+    assert "Overall Score: 12/12" in text
+    assert "Verdict: **portfolio-ready**" in text
+    assert "MISSING" not in text
+
+
+def test_population_stability_index_status_thresholds():
+    ref = pd.Series([0, 1, 2, 3, 4, 5])
+    cur = pd.Series([0, 1, 2, 3, 4, 5])
+    assert population_stability_index(ref, cur) == pytest.approx(0.0)
+    assert psi_status(0.05) == "ok"
+    assert psi_status(0.12) == "watch"
+    assert psi_status(0.30) == "alert"
 
 
 # --- Trained model bundles --------------------------------------------------

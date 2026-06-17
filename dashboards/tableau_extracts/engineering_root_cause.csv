@@ -1,20 +1,19 @@
 usage_profile,top_risk_driver,cells,avg_capacity_fade_rate,avg_resistance_growth_rate,avg_failure_probability
-fast_charge_heavy,Accelerated capacity fade,6,0.000514,0.006024,0.757
-fast_charge_heavy,Deep discharge cycling,1,0.000366,0.003147,0.0896
-fast_charge_heavy,Low state of health,5,0.000395,0.004243,0.5209
-fast_charge_heavy,Sustained thermal exposure,1,0.00034,0.003543,0.1541
-fast_charge_heavy,Test-station anomaly signal,5,0.000388,0.003453,0.3013
-heavy,Accelerated capacity fade,7,0.000459,0.002674,0.5467
-heavy,Deep discharge cycling,7,0.000311,0.001768,0.0203
-heavy,Low state of health,7,0.000351,0.001945,0.169
-heavy,Test-station anomaly signal,3,0.000342,0.001786,0.052
+fast_charge_heavy,Accelerated capacity fade,7,0.000493,0.005613,0.6604
+fast_charge_heavy,Internal resistance growth,1,0.00034,0.003543,0.1459
+fast_charge_heavy,Low state of health,5,0.000395,0.004243,0.5226
+fast_charge_heavy,Test-station anomaly signal,5,0.000388,0.003453,0.2968
+heavy,Accelerated capacity fade,6,0.000468,0.00277,0.5647
+heavy,Deep discharge cycling,7,0.000311,0.001768,0.02
+heavy,Low state of health,8,0.000358,0.001965,0.1938
+heavy,Test-station anomaly signal,3,0.000342,0.001786,0.0513
 normal,Accelerated capacity fade,8,0.000248,0.001324,0.0036
-normal,Deep discharge cycling,10,0.000258,0.001519,0.0038
-normal,High cumulative cycle count,9,0.000231,0.001421,0.0022
+normal,Deep discharge cycling,10,0.000258,0.001519,0.0039
+normal,High cumulative cycle count,9,0.000231,0.001421,0.0023
 normal,High-temperature field exposure,2,0.000218,0.001461,0.0011
-normal,Low state of health,8,0.000373,0.002657,0.1184
-normal,Test-station anomaly signal,18,0.000263,0.001662,0.0342
-thermal_stress,Accelerated capacity fade,13,0.000563,0.003386,0.9033
-thermal_stress,Low state of health,1,0.000466,0.003309,0.9856
-thermal_stress,Sustained thermal exposure,8,0.00039,0.002517,0.7071
-thermal_stress,Test-station anomaly signal,1,0.000494,0.002898,0.9794
+normal,Low state of health,8,0.000373,0.002657,0.1192
+normal,Test-station anomaly signal,18,0.000263,0.001662,0.0336
+thermal_stress,Accelerated capacity fade,14,0.000551,0.003315,0.8991
+thermal_stress,Low state of health,1,0.000466,0.003309,0.9868
+thermal_stress,Sustained thermal exposure,7,0.000389,0.002534,0.6945
+thermal_stress,Test-station anomaly signal,1,0.000494,0.002898,0.9765
