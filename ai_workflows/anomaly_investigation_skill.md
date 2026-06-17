@@ -65,4 +65,4 @@ Confidence: <low|medium|high> + what would raise it
 ## Guardrails
 - Never claim certainty from one cell; state confidence and what evidence is missing.
 - Distinguish **cell defect** vs **station/measurement artifact** before recommending scrap.
-- All data is synthetic; do not reference Apple-internal systems or real part numbers.
+- All data is synthetic; do not reference any company-internal systems or real part numbers.

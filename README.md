@@ -208,6 +208,14 @@ given cell stay on one side of the split). Feature contracts are explicit in
 [`reports/model_performance_summary.md`](reports/model_performance_summary.md) every
 pipeline run. Numbers vary slightly with data scale / quick mode.*
 
+> **Reading the synthetic-data metrics honestly:** the failure-risk classifier's
+> very high ROC-AUC is *expected* — the synthetic labels are generated from known
+> degradation mechanisms, so a correct pipeline should recover them. These scores
+> validate that the **feature logic and the training/scoring path work end to end**;
+> they are **not** a claim of real-world production accuracy. The NASA real-data
+> layer is an independent **degradation sanity check**, and genuine production
+> validation would require larger real factory / usage / failure datasets.
+
 **Engineered features** include `capacity_fade_rate`, `resistance_growth_rate`,
 `rolling_capacity_mean_10`, `rolling_temperature_max_10`, `rolling_resistance_mean_10`,
 `soh_delta_last_20_cycles`, `cycle_count`, `fast_charge_ratio`,

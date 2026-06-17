@@ -93,7 +93,7 @@ def _write_markdown(queue: pd.DataFrame) -> None:
     lines = [
         "# High-Risk Battery Cells - Daily Escalation Summary",
         "",
-        f"_Generated: {date.today().isoformat()} • synthetic data; no Apple confidential data used._",
+        f"_Generated: {date.today().isoformat()} • synthetic data; no confidential data used._",
         "",
         f"**{n} cells** require engineering attention today "
         f"({', '.join(headline_parts)}).",

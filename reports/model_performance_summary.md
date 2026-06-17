@@ -1,6 +1,6 @@
 # Model Performance Summary
 
-_Generated: 2026-06-17 • all data synthetic; no Apple confidential data used._
+_Generated: 2026-06-17 • all data synthetic; no confidential data used._
 
 ## 1. State of Health (SOH) regression
 - **Algorithm:** GradientBoosting
@@ -64,6 +64,13 @@ Confusion matrix (rows = actual, cols = predicted):
 | ---------- | ------ | ------ |
 | **Actual 0** | 22 | 2 |
 | **Actual 1** | 0 | 6 |
+
+> **Note on the high ROC-AUC (synthetic data):** these labels are generated from
+> known degradation mechanisms, so a correct pipeline is *expected* to recover
+> them well. This metric validates the feature logic and the train/score path
+> end to end; it is **not** a claim of real-world production accuracy. The NASA
+> real-data layer is an independent degradation sanity check, and production
+> validation would require larger real factory / usage / failure datasets.
 
 Top drivers (permutation_importance):
 

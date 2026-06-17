@@ -96,6 +96,6 @@ Fields: all columns of `escalation_queue.csv`.
 - Risk color scale fixed across pages: Low `#2e7d32`, Medium `#f9a825`, High
   `#ef6c00`, Critical `#c62828`.
 - SOH reference line at **0.80** (end-of-life) on every SOH axis.
-- Every page footer: *"Synthetic data — no Apple confidential data used."*
+- Every page footer: *"Synthetic data — no confidential data used."*
 - Refresh model: pipeline regenerates extracts daily; in Tableau, point the data
   sources at `dashboards/tableau_extracts/` and refresh the extract.

@@ -1,6 +1,6 @@
 """Generate realistic synthetic lithium-ion battery engineering data.
 
-No Apple confidential data or internal systems are used anywhere in this
+No confidential, proprietary, or internal company data is used anywhere in this
 project. This module simulates a plausible factory + field dataset using a
 physically-motivated degradation model so the rest of the platform (warehouse,
 features, models, reports) has something realistic to operate on.

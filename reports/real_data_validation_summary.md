@@ -3,7 +3,7 @@
 _Generated: 2026-06-17._
 
 This report uses **real public lithium-ion battery aging data** for validation.
-It does not use Apple confidential data.
+It does not use any confidential or proprietary data.
 
 - Source dataset: NASA PCoE Battery Aging Data
 - Official upstream: https://phm-datasets.s3.amazonaws.com/NASA/5.+Battery+Data+Set.zip

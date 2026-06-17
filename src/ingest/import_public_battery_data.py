@@ -265,7 +265,7 @@ def build_report(summary: pd.DataFrame | None = None) -> str:
         f"_Generated: {date.today().isoformat()}._",
         "",
         "This report uses **real public lithium-ion battery aging data** for validation.",
-        "It does not use Apple confidential data.",
+        "It does not use any confidential or proprietary data.",
         "",
         f"- Source dataset: {source.name}",
         f"- Official upstream: {source.official_url}",

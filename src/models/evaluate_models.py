@@ -46,7 +46,7 @@ def build_report() -> str:
 
     md = f"""# Model Performance Summary{quick}
 
-_Generated: {date.today().isoformat()} • all data synthetic; no Apple confidential data used._
+_Generated: {date.today().isoformat()} • all data synthetic; no confidential data used._
 
 ## 1. State of Health (SOH) regression
 - **Algorithm:** {soh.algorithm}
@@ -92,6 +92,13 @@ Confusion matrix (rows = actual, cols = predicted):
 | ---------- | ------ | ------ |
 | **Actual 0** | {cm[0][0]} | {cm[0][1]} |
 | **Actual 1** | {cm[1][0]} | {cm[1][1]} |
+
+> **Note on the high ROC-AUC (synthetic data):** these labels are generated from
+> known degradation mechanisms, so a correct pipeline is *expected* to recover
+> them well. This metric validates the feature logic and the train/score path
+> end to end; it is **not** a claim of real-world production accuracy. The NASA
+> real-data layer is an independent degradation sanity check, and production
+> validation would require larger real factory / usage / failure datasets.
 
 {_importance_md(fail)}
 
