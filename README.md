@@ -407,20 +407,4 @@ A readable daily standup version is written to
 
 ---
 
-## Recommended resume bullets
-
-- Built an **end-to-end battery analytics platform** (Python, SQL, Bash/Perl) that
-  ingests factory/usage/failure data into a **star-schema warehouse** and powers an
-  automated daily **escalation-reporting** pipeline.
-- Trained **SOH, RUL, and failure-risk ML models** with leakage-aware, cell-grouped
-  validation (**SOH R² 0.95, RUL MAE ≈ 46 cycles, failure ROC-AUC 0.99 at 100% recall**),
-  with SHAP/permutation explainability surfacing root-cause drivers.
-- Automated **data-quality gating, model scoring, and Tableau-ready reporting**, and
-  authored **reusable LLM workflows** for anomaly triage and NL→SQL — all covered by
-  **pytest + GitHub Actions CI**.
-- Added **JMP-ready handoff files, TCP/IP data-source preflight checks, and cohort
-  drift monitoring** to make the workflow closer to a real battery engineering data product.
-
----
-
 *License: MIT. Default factory/usage/failure data is synthetic; NASA validation data is public; mock production fixtures are synthetic. Not affiliated with or endorsed by any battery manufacturer.*
