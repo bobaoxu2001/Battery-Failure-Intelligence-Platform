@@ -232,7 +232,7 @@ def parse_batteries_detailed(
             f"{config.NASA_OFFICIAL_ARCHIVE_DIR}."
         )
     if all_available:
-        requested = sorted(index)
+        requested = available_batteries(archive_dir)
     elif battery_ids:
         requested = battery_ids
     else:

@@ -158,7 +158,8 @@ DDL: [`sql/create_schema.sql`](sql/create_schema.sql) · marts:
 The default ML/warehouse training path remains **synthetic** so it is fast and
 fully reproducible. As an independent **external validation** layer, the project
 also ingests **real public NASA PCoE battery aging data** and writes
-`reports/real_data_validation_summary.md` from
+`reports/real_data_validation_summary.md` and
+`reports/real_data_coverage_and_limitations.md` from
 `data/processed/nasa_real_cycle_summary.csv`.
 
 `src/ingest/import_public_battery_data.py` selects the best available source, in
@@ -172,6 +173,8 @@ order of authority:
    `SOURCE=archive bash scripts/run_real_data_validation.sh`
    To scan every battery discoverable in the local archive:
    `SOURCE=archive BATTERIES=all bash scripts/run_real_data_validation.sh`
+   To parse a specific set:
+   `SOURCE=archive BATTERY_IDS="B0005 B0006 B0049" bash scripts/run_real_data_validation.sh`
 2. **Processed-CSV mirror** — a lightweight third-party convenience mirror for
    quick demos when the official archive is not on disk:
    `DOWNLOAD=1 bash scripts/run_real_data_validation.sh`
@@ -307,6 +310,8 @@ bash scripts/sql_export.sh                     # export ad-hoc SQL results to CS
 perl scripts/parse_raw_logs.pl                 # parse raw telemetry logs only
 BFI_DATA_SOURCES="cycler-db.local:5432" bash scripts/check_data_source_connectivity.sh
 SOURCE=archive bash scripts/run_real_data_validation.sh # parse official NASA .mat archive
+BATTERIES=all SOURCE=archive bash scripts/run_real_data_validation.sh
+BATTERY_IDS="B0005 B0006 B0049" SOURCE=archive bash scripts/run_real_data_validation.sh
 DOWNLOAD=1 bash scripts/run_real_data_validation.sh     # or fetch processed-CSV mirror
 ```
 

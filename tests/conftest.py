@@ -25,6 +25,7 @@ def _build_if_missing() -> None:
         config.MODEL_MONITORING_REPORT,
         config.NASA_REAL_CYCLE_SUMMARY_CSV,
         config.REAL_DATA_VALIDATION_REPORT,
+        config.REAL_DATA_COVERAGE_REPORT,
         config.PROJECT_READINESS_SCORECARD,
     ]
     models = [

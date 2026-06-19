@@ -62,6 +62,7 @@ MODEL_MONITORING_METRICS_CSV = REPORTS_DIR / "model_monitoring_metrics.csv"
 MODEL_MONITORING_REPORT = REPORTS_DIR / "model_monitoring_summary.md"
 PROJECT_READINESS_SCORECARD = REPORTS_DIR / "project_readiness_scorecard.md"
 REAL_DATA_VALIDATION_REPORT = REPORTS_DIR / "real_data_validation_summary.md"
+REAL_DATA_COVERAGE_REPORT = REPORTS_DIR / "real_data_coverage_and_limitations.md"
 
 # --------------------------------------------------------------------------- #
 # Reproducibility / scale

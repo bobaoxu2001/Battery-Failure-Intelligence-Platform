@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import io
+import subprocess
 import sys
 import zipfile
 
@@ -91,6 +92,23 @@ def test_parse_all_available_archive_batteries(tmp_path):
     assert len(summary) == 6
 
 
+def test_all_available_build_uses_archive_index(tmp_path, monkeypatch):
+    archive_dir = tmp_path / "archive"
+    archive_dir.mkdir()
+    with zipfile.ZipFile(archive_dir / "BatteryAgingARC_fixture.zip", "w") as zf:
+        zf.writestr("nested/B9001.mat", _synthetic_nasa_mat("B9001"))
+        zf.writestr("nested/B9002.mat", _synthetic_nasa_mat("B9002"))
+
+    monkeypatch.setattr(config, "NASA_OFFICIAL_ARCHIVE_DIR", archive_dir)
+    monkeypatch.setattr(config, "NASA_REAL_CYCLE_SUMMARY_CSV", tmp_path / "summary.csv")
+
+    summary = import_public_battery_data.build_real_cycle_summary(
+        source="archive", all_available=True
+    )
+
+    assert sorted(summary["battery_id"].unique()) == ["B9001", "B9002"]
+
+
 def test_normalise_processed_nasa_csv(tmp_path):
     path = tmp_path / "B9999_processed.csv"
     pd.DataFrame(
@@ -168,7 +186,9 @@ def test_bundled_sample_fallback_when_archive_missing(tmp_path, monkeypatch):
 
 def test_real_data_report_is_generated(tmp_path, monkeypatch):
     report_path = tmp_path / "real_data_validation_summary.md"
+    coverage_path = tmp_path / "real_data_coverage_and_limitations.md"
     monkeypatch.setattr(config, "REAL_DATA_VALIDATION_REPORT", report_path)
+    monkeypatch.setattr(config, "REAL_DATA_COVERAGE_REPORT", coverage_path)
     summary = pd.DataFrame(
         {
             "source_dataset": ["NASA PCoE Battery Aging Data"] * 4,
@@ -189,9 +209,13 @@ def test_real_data_report_is_generated(tmp_path, monkeypatch):
     text = import_public_battery_data.build_report(summary)
 
     assert report_path.exists()
+    assert coverage_path.exists()
     assert "Number of parsed batteries: 1" in text
     assert "Temperature Summary" in text
     assert "B9999" in text
+    coverage = coverage_path.read_text(encoding="utf-8")
+    assert "Which Parts Remain Synthetic" in coverage
+    assert "Production Translation" in coverage
 
 
 def test_import_cli_accepts_all_available_flag_with_sample_source(tmp_path, monkeypatch):
@@ -215,9 +239,21 @@ def test_import_cli_accepts_all_available_flag_with_sample_source(tmp_path, monk
     monkeypatch.setattr(config, "NASA_REAL_SAMPLE_CSV", sample)
     monkeypatch.setattr(config, "NASA_REAL_CYCLE_SUMMARY_CSV", tmp_path / "summary.csv")
     monkeypatch.setattr(config, "REAL_DATA_VALIDATION_REPORT", tmp_path / "report.md")
+    monkeypatch.setattr(config, "REAL_DATA_COVERAGE_REPORT", tmp_path / "coverage.md")
     monkeypatch.setattr(sys, "argv", ["import_public_battery_data", "--source", "sample", "--all-available"])
 
     import_public_battery_data.main()
 
     assert (tmp_path / "summary.csv").exists()
     assert (tmp_path / "report.md").exists()
+    assert (tmp_path / "coverage.md").exists()
+
+
+def test_real_data_validation_shell_script_syntax():
+    result = subprocess.run(
+        ["bash", "-n", "scripts/run_real_data_validation.sh"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr

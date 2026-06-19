@@ -159,6 +159,7 @@ def _summary_from_official_archive(
         {"battery_id": item.battery_id, "reason": item.reason} for item in skipped
     ]
     summary.attrs["all_available_requested"] = all_available
+    summary.attrs["source_mode"] = "official NASA .mat archive"
     log.info("Used official NASA .mat archive (%d rows, %d batteries)",
              len(summary), summary["battery_id"].nunique())
     return summary
@@ -172,6 +173,7 @@ def _summary_from_mirror(download: bool, battery_ids: list[str] | None) -> pd.Da
     if not paths:
         return None
     summary = pd.concat([_normalise_processed_csv(path) for path in paths], ignore_index=True)
+    summary.attrs["source_mode"] = "processed-CSV mirror"
     log.info("Used processed-CSV mirror (%d rows, %d batteries)",
              len(summary), summary["battery_id"].nunique())
     return summary
@@ -181,6 +183,7 @@ def _summary_from_bundled_sample() -> pd.DataFrame | None:
     if not config.NASA_REAL_SAMPLE_CSV.exists():
         return None
     sample = pd.read_csv(config.NASA_REAL_SAMPLE_CSV)
+    sample.attrs["source_mode"] = "bundled sample"
     log.info("Used bundled NASA real-data sample %s (%d rows)",
              config.NASA_REAL_SAMPLE_CSV, len(sample))
     return sample
@@ -280,14 +283,27 @@ def _skipped_batteries(summary: pd.DataFrame) -> list[dict[str, str]]:
     return skipped if isinstance(skipped, list) else []
 
 
+def _source_mode(summary: pd.DataFrame) -> str:
+    mode = summary.attrs.get("source_mode")
+    if isinstance(mode, str) and mode:
+        return mode
+    adapters = set(summary.get("source_adapter", pd.Series(dtype=str)).dropna())
+    if "processed_csv_mirror" in adapters:
+        return "processed-CSV mirror"
+    if "official_mat_archive" in adapters:
+        return "official NASA .mat archive or archive-derived bundled sample"
+    return "bundled sample"
+
+
 def build_report(summary: pd.DataFrame | None = None) -> str:
-    """Write a Markdown report proving real public battery data was parsed."""
+    """Write Markdown reports proving real public battery data was parsed."""
     config.ensure_dirs()
     source = RealDataSource()
     if summary is None:
         summary = pd.read_csv(config.NASA_REAL_CYCLE_SUMMARY_CSV)
     rollup = _battery_rollup(summary)
     skipped = _skipped_batteries(summary)
+    source_mode = _source_mode(summary)
     adapters = sorted(summary["source_adapter"].dropna().unique()) if "source_adapter" in summary else []
     adapter_label = {
         "official_mat_archive": "official NASA .mat archive (authoritative)",
@@ -304,6 +320,7 @@ def build_report(summary: pd.DataFrame | None = None) -> str:
         "",
         f"- Source dataset: {source.name}",
         f"- Official upstream: {source.official_url}",
+        f"- Run source mode: {source_mode}",
         f"- Adapter used: {adapter_text}",
         f"- Processed-CSV mirror (fallback): {source.processed_mirror}",
         f"- Parsed batteries: {', '.join(rollup['battery_id'].tolist())}",
@@ -363,6 +380,110 @@ def build_report(summary: pd.DataFrame | None = None) -> str:
     md = "\n".join(lines) + "\n"
     config.REAL_DATA_VALIDATION_REPORT.write_text(md, encoding="utf-8")
     log.info("Wrote real-data validation report %s", config.REAL_DATA_VALIDATION_REPORT)
+    build_coverage_report(summary=summary, rollup=rollup, skipped=skipped, source_mode=source_mode)
+    return md
+
+
+def build_coverage_report(
+    summary: pd.DataFrame | None = None,
+    rollup: pd.DataFrame | None = None,
+    skipped: list[dict[str, str]] | None = None,
+    source_mode: str | None = None,
+) -> str:
+    """Write a broader coverage/limitations report from the normalized summary."""
+    config.ensure_dirs()
+    source = RealDataSource()
+    if summary is None:
+        summary = pd.read_csv(config.NASA_REAL_CYCLE_SUMMARY_CSV)
+    if rollup is None:
+        rollup = _battery_rollup(summary)
+    if skipped is None:
+        skipped = _skipped_batteries(summary)
+    source_mode = source_mode or _source_mode(summary)
+    adapters = sorted(summary["source_adapter"].dropna().unique()) if "source_adapter" in summary else []
+    adapter_text = ", ".join(adapters) or "bundled_sample"
+
+    lines = [
+        "# Real-Data Coverage and Limitations",
+        "",
+        f"_Generated: {date.today().isoformat()}._",
+        "",
+        "This report is generated from the same normalized NASA real-data cycle summary used by `reports/real_data_validation_summary.md`.",
+        "It does not use Apple confidential data, proprietary factory records, field telemetry, or internal failure labels.",
+        "",
+        "## Coverage Snapshot",
+        "",
+        f"- Source dataset: {source.name}",
+        f"- Official upstream: {source.official_url}",
+        f"- Adapter used: {adapter_text}",
+        f"- Run source mode: {source_mode}",
+        f"- Number of parsed batteries: {len(rollup)}",
+        f"- Number of parsed discharge cycles: {len(summary)}",
+        f"- Parsed battery IDs: {', '.join(rollup['battery_id'].tolist())}",
+        f"- Skipped batteries: {len(skipped)}",
+        "",
+        "## Coverage by Battery",
+        "",
+        "| Battery | Discharge cycles | Capacity loss | First <80% SOH | Max discharge temp C | Corr(cycle, capacity) | Validation note |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for _, row in rollup.iterrows():
+        first_below = "" if pd.isna(row["first_cycle_below_80pct_soh"]) else int(row["first_cycle_below_80pct_soh"])
+        lines.append(
+            f"| {row['battery_id']} | {int(row['cycles'])} | {row['capacity_loss_pct']:.1%} | "
+            f"{first_below} | {row['max_discharge_temp_c']:.1f} | "
+            f"{row['capacity_cycle_corr']:.3f} | {row['validation_note']} |"
+        )
+
+    lines += [
+        "",
+        "## Skipped Batteries",
+        "",
+    ]
+    if skipped:
+        lines += ["| Battery | Reason |", "| --- | --- |"]
+        for item in skipped:
+            lines.append(f"| {item.get('battery_id', '')} | {item.get('reason', '')} |")
+    else:
+        lines.append("No requested batteries were skipped.")
+
+    lines += [
+        "",
+        "## Which Parts Use Real Public Data",
+        "",
+        "- NASA PCoE discharge-cycle capacity and temperature data are used by the real-data validation layer.",
+        "- `src/ingest/nasa_mat_parser.py` parses official `.mat` battery files when the archive is present locally.",
+        "- `src/ingest/import_public_battery_data.py` normalizes real cycle rows and writes the validation reports.",
+        "",
+        "## Which Parts Remain Synthetic",
+        "",
+        "- The default factory, usage, failure-event, model-training, warehouse, and escalation pipeline remains synthetic and reproducible.",
+        "- Lot IDs, station IDs, equipment IDs, field-usage profiles, failure labels, and escalation thresholds are synthetic.",
+        "- Synthetic model metrics are implementation checks, not production accuracy claims.",
+        "",
+        "## What NASA Validates Well",
+        "",
+        "- Cycle-level degradation ingestion from public battery-aging files.",
+        "- Capacity fade and SOH trend extraction for clear fade cases.",
+        "- Temperature feature extraction and cycle-capacity correlation reporting.",
+        "- A reproducible adapter pattern for adding large public datasets without committing raw archives.",
+        "",
+        "## What NASA Does Not Validate",
+        "",
+        "- Apple factory process behavior, station routing, lot history, or supplier-specific process controls.",
+        "- Field usage logs, warranty telemetry, device-level customer usage, or proprietary safety events.",
+        "- Apple proprietary failure labels, engineer-reviewed root causes, or production escalation thresholds.",
+        "- Production false-positive rates, missed escalation rates, or operational reviewer workload.",
+        "",
+        "## Production Translation",
+        "",
+        "In a real production environment, this layer would connect to governed internal warehouse tables, then validate by cell group, lot, station, protocol, supplier, and time window.",
+        "Failure and escalation labels would need calibration with battery engineers, followed by drift tracking, false-positive review, and backtesting across production periods.",
+    ]
+
+    md = "\n".join(lines) + "\n"
+    config.REAL_DATA_COVERAGE_REPORT.write_text(md, encoding="utf-8")
+    log.info("Wrote real-data coverage report %s", config.REAL_DATA_COVERAGE_REPORT)
     return md
 
 

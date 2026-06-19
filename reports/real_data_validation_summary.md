@@ -7,6 +7,7 @@ It does not use any confidential or proprietary data.
 
 - Source dataset: NASA PCoE Battery Aging Data
 - Official upstream: https://phm-datasets.s3.amazonaws.com/NASA/5.+Battery+Data+Set.zip
+- Run source mode: official NASA .mat archive
 - Adapter used: official NASA .mat archive (authoritative)
 - Processed-CSV mirror (fallback): https://github.com/natskiu/Nasa-Battery
 - Parsed batteries: B0005, B0006, B0007, B0018, B0025, B0026, B0027, B0028, B0029, B0030, B0031, B0032, B0033, B0034, B0036, B0038, B0039, B0040, B0041, B0042, B0043, B0044, B0045, B0046, B0047, B0048, B0049, B0050, B0051, B0052, B0053, B0054, B0055, B0056
