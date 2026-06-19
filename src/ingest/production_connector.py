@@ -2,7 +2,7 @@
 
 This module intentionally does not connect to any private system by default.
 It defines configuration, schema contracts, and safe CLI checks for a future
-authorized environment. No Apple or proprietary production data is accessed.
+authorized environment. No proprietary production data is accessed.
 """
 from __future__ import annotations
 

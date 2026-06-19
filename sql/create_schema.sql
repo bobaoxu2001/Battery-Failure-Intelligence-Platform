@@ -2,7 +2,7 @@
 -- Battery Failure Intelligence Platform - analytics warehouse schema
 -- Engine: SQLite (DuckDB-compatible DDL). Star schema: conformed dimensions +
 -- fact tables for cycle measurements, usage, failure events and model scores.
--- All data is synthetic; no Apple confidential data is used.
+-- All data is synthetic; no confidential company data is used.
 -- ===========================================================================
 
 -- ----- Dimensions ----------------------------------------------------------

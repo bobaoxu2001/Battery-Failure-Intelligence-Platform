@@ -105,7 +105,7 @@ def test_mock_production_fixtures_load_successfully():
         assert required_columns.issubset(frame.columns)
 
     readme = (MOCK_DIR / "README.md").read_text(encoding="utf-8")
-    assert "not Apple data" in readme
+    assert "not company data" in readme
     assert "not production data" in readme
 
 

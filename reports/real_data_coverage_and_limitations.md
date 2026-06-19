@@ -3,7 +3,7 @@
 _Generated: 2026-06-19._
 
 This report is generated from the same normalized NASA real-data cycle summary used by `reports/real_data_validation_summary.md`.
-It does not use Apple confidential data, proprietary factory records, field telemetry, or internal failure labels.
+It does not use confidential company data, proprietary factory records, field telemetry, or internal failure labels.
 
 ## Coverage Snapshot
 
@@ -80,9 +80,9 @@ No requested batteries were skipped.
 
 ## What NASA Does Not Validate
 
-- Apple factory process behavior, station routing, lot history, or supplier-specific process controls.
+- Proprietary factory process behavior, station routing, lot history, or supplier-specific process controls.
 - Field usage logs, warranty telemetry, device-level customer usage, or proprietary safety events.
-- Apple proprietary failure labels, engineer-reviewed root causes, or production escalation thresholds.
+- Proprietary failure labels, engineer-reviewed root causes, or production escalation thresholds.
 - Production false-positive rates, missed escalation rates, or operational reviewer workload.
 
 ## Production Translation

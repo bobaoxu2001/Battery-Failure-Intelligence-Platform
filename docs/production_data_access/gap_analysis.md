@@ -1,6 +1,6 @@
 # Production Data Access Gap Analysis
 
-This repository currently proves the battery analytics workflow with reproducible synthetic data and a separate real public NASA PCoE degradation validation layer. It does not contain proprietary production data, Apple internal data, restricted system exports, or confidential company records.
+This repository currently proves the battery analytics workflow with reproducible synthetic data and a separate real public NASA PCoE degradation validation layer. It does not contain proprietary production data, internal company data, restricted system exports, or confidential company records.
 
 ## Current Data Categories
 
@@ -22,10 +22,10 @@ This repository currently proves the battery analytics workflow with reproducibl
 
 ## What It Does Not Prove Without Authorized Production Data
 
-- It does not prove accuracy on Apple factory data, field telemetry, safety records, or internal escalation labels.
+- It does not prove accuracy on proprietary factory data, field telemetry, safety records, or internal escalation labels.
 - It does not validate real station-to-station process variation, lot genealogy, supplier effects, quality holds, retest outcomes, or engineering dispositions.
 - It does not calibrate escalation thresholds against production reviewer workload, false positives, false negatives, or teardown feedback.
-- It does not contain or imply access to any Apple internal warehouse, VPN, API, credentials, or confidential systems.
+- It does not contain or imply access to any internal warehouse, VPN, API, credentials, or confidential systems.
 
 ## What A Real Battery Engineering Team Would Likely Need
 

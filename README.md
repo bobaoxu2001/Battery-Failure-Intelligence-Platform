@@ -9,8 +9,8 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 > ⚠️ **Data disclaimer:** the default end-to-end pipeline uses **synthetic,
 > physically-motivated battery data** generated locally. The repo also includes a
 > bundled validation sample and adapter for **public real NASA PCoE battery aging data**.
-> It does **not** use any Apple confidential data and does **not** imply access to
-> any Apple internal system.
+> It does **not** use confidential company data and does **not** imply access to
+> any internal production system.
 
 ---
 
@@ -24,11 +24,9 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 - **Decision-ready reporting** — a ranked escalation queue with likely root cause + recommended follow-up per cell, plus Tableau-ready extracts and JMP handoff files.
 - **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, pytest + GitHub Actions, and explicit notes that production validation would require real factory, usage, and failure labels.
 
-**Why it fits the Apple Battery DS Contractor role:** the JD centers on Python ML,
-SQL/data-warehousing, factory/usage/failure analysis, urgent escalation reporting,
-Tableau/JMP, and a Unix/Bash/Perl environment — each maps to a concrete, runnable
-artifact here (see the [role-fit table](#role-fit-apple-battery-engineering-data-scientist-contractor)
-and the [readiness scorecard](reports/project_readiness_scorecard.md)).
+For a quick technical audit, start with the
+[readiness scorecard](reports/project_readiness_scorecard.md), then skim the
+generated reports under [Demo outputs](#-demo-outputs).
 
 **Run it in 3 commands:**
 ```bash
@@ -55,7 +53,7 @@ committed so you can read them on GitHub without running anything:
 - 🔐 [**Authorized production data contract**](docs/production_data_access/production_data_contract.md) — production-style schemas, access runbook, and validation plan without private data.
 - 🌐 [**Public dataset expansion plan**](docs/public_battery_dataset_expansion_plan.md) — CALCE, Oxford, and Severson/MIT-Stanford datasets assessed for future adapters.
 - 📊 [**Tableau dashboard blueprint**](dashboards/tableau_dashboard_blueprint.md) — the 4 dashboard pages (fields + charts per page).
-- ✅ [**Project readiness scorecard**](reports/project_readiness_scorecard.md) — evidence-based mapping of each role competency to a concrete artifact.
+- ✅ [**Project readiness scorecard**](reports/project_readiness_scorecard.md) — evidence-based mapping of each engineering competency to a concrete artifact.
 
 ---
 
@@ -73,34 +71,6 @@ recommended engineering follow-up for every flagged cell. It is deliberately bui
 as an **engineering analytics system**, not a one-off Kaggle notebook: it has a
 landing zone, a star-schema warehouse, data-quality gates, modular pipeline steps,
 tests, CI, and reusable AI workflows.
-
----
-
-## Role Fit: Apple Battery Engineering Data Scientist Contractor
-
-This project was built to map directly onto the JD for the **Data Scientist
-Contractor – Battery Engineering Analytics** role.
-
-| JD requirement | Where it lives in this repo |
-| --- | --- |
-| **Python ML functions** | `src/models/` — SOH regression, RUL regression, failure classification (scikit-learn, optional LightGBM/XGBoost) |
-| **GitHub software traceability** | Modular `src/` package, `pyproject.toml`, tests, GitHub Actions CI, `LICENSE`, and `reports/project_readiness_scorecard.md` |
-| **SQL database & data warehousing / modeling** | `sql/` star schema + marts, built into SQLite/DuckDB by `src/warehouse/` |
-| **Large-table / big-data habits** | Chunked cycle fact loading via `BFI_WAREHOUSE_CHUNKSIZE` in `src/warehouse/build_warehouse.py` |
-| **Real public battery data** | `src/ingest/nasa_mat_parser.py` parses NASA's original `.mat` archive directly (+ CSV-mirror fallback) → `reports/real_data_validation_summary.md` |
-| **Factory, user & failure data analysis** | `factory`, `usage`, `failure_events` tables + `mart_factory_quality`, station/lot anomaly analysis |
-| **Urgent escalation reporting** | `src/reporting/generate_escalation_report.py` → `reports/escalation_report_sample.csv` + `high_risk_cells_summary.md` |
-| **Tableau-ready reporting** | `dashboards/tableau_extracts/*.csv` + `dashboards/tableau_dashboard_blueprint.md` (4 dashboard pages) |
-| **Unix / Bash / Perl environment** | `scripts/parse_raw_logs.pl`, `validate_files.sh`, `run_daily_pipeline.sh`, `sql_export.sh` |
-| **TCP/IP data-source checks** | `scripts/check_data_source_connectivity.sh` — `host:port` preflight using `nc` / `/dev/tcp` before ingest jobs |
-| **JMP-ready engineering analysis** | `src/reporting/generate_jmp_exports.py` → `reports/jmp_cell_analysis.csv` + `reports/jmp_battery_analysis.jsl` |
-| **Statistics & value-added analysis** | Feature engineering, grouped validation, correlation/anomaly analysis, model metrics |
-| **Production-style monitoring** | `src/models/monitor_drift.py` → cohort PSI, risk mix, and top-driver monitoring summary |
-| **Reporting automation** | One-command daily pipeline regenerates data → features → warehouse → models → reports → extracts |
-| **AI-powered reusable workflows** | `ai_workflows/` — 4 reusable LLM skills for anomaly triage, NL→SQL, model debugging, escalation writing |
-| **Battery engineering domain** | Capacity fade + knee, impedance growth, thermal/fast-charge stress, EOL at 80% SOH, lot/station quality |
-
----
 
 ## Architecture
 
@@ -213,7 +183,7 @@ for the honest production-readiness boundary.
 
 ### Production Data Access: Authorized-Only Design
 
-This repo does **not** contain proprietary production data, Apple internal data,
+This repo does **not** contain proprietary production data, internal company data,
 private credentials, restricted system exports, or raw factory records. The
 production-data layer is a scaffold for an authorized environment only.
 
@@ -313,7 +283,7 @@ is in [`dashboards/tableau_dashboard_blueprint.md`](dashboards/tableau_dashboard
 
 ## AI workflow overview
 
-Four reusable, LLM-powered skills (the "AI tool proficiency" the JD calls for) in
+Four reusable, LLM-powered workflows for engineering analytics work live in
 [`ai_workflows/`](ai_workflows/):
 
 - **`anomaly_investigation_skill.md`** — triage a single `cell_id`: compare to batch
@@ -453,4 +423,4 @@ A readable daily standup version is written to
 
 ---
 
-*License: MIT. Default factory/usage/failure data is synthetic; NASA validation data is public; mock production fixtures are synthetic. Not affiliated with or endorsed by Apple.*
+*License: MIT. Default factory/usage/failure data is synthetic; NASA validation data is public; mock production fixtures are synthetic. Not affiliated with or endorsed by any battery manufacturer.*
