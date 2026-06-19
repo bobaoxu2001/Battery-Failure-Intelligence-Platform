@@ -12,6 +12,7 @@ import pytest
 import scipy.io
 
 from src import config
+from src.ingest import import_oxford_battery_data
 from src.ingest import import_public_battery_data
 from src.ingest.import_public_battery_data import _battery_rollup, _normalise_processed_csv
 from src.ingest.nasa_mat_parser import (
@@ -20,6 +21,7 @@ from src.ingest.nasa_mat_parser import (
     parse_batteries_detailed,
     build_zip_index,
 )
+from src.ingest.oxford_mat_parser import battery_rollup as oxford_battery_rollup
 
 
 def _synthetic_nasa_mat(battery_id: str = "B9999") -> bytes:
@@ -257,3 +259,48 @@ def test_real_data_validation_shell_script_syntax():
         text=True,
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_oxford_bundled_sample_has_real_degradation_shape():
+    sample = pd.read_csv(config.OXFORD_REAL_SAMPLE_CSV)
+    assert sample["source_dataset"].eq("Oxford Battery Degradation Dataset 1").all()
+    assert sample["cell_id"].nunique() >= 4
+    assert {"capacity_ah", "soh", "max_discharge_temp_c", "cycle_index"}.issubset(sample.columns)
+    rollup = oxford_battery_rollup(sample)
+    assert (rollup["capacity_loss_pct"] > 0).any()
+    assert (rollup["capacity_cycle_corr"] < 0).any()
+
+
+def test_oxford_sample_import_generates_summary_and_report(tmp_path, monkeypatch):
+    sample = pd.DataFrame(
+        {
+            "source_dataset": ["Oxford Battery Degradation Dataset 1"] * 4,
+            "source_adapter": ["official_mat_archive"] * 4,
+            "cell_id": ["CellX"] * 4,
+            "cycle_index": [0, 100, 200, 300],
+            "capacity_ah": [0.74, 0.70, 0.66, 0.60],
+            "max_discharge_temp_c": [41.0, 41.2, 41.5, 41.7],
+            "mean_discharge_temp_c": [40.0, 40.1, 40.2, 40.3],
+            "min_voltage_v": [2.7, 2.7, 2.7, 2.7],
+            "max_voltage_v": [4.2, 4.2, 4.2, 4.2],
+            "n_discharge_points": [1000, 1000, 1000, 1000],
+            "soh": [1.0, 0.946, 0.892, 0.811],
+        }
+    )
+    sample_path = tmp_path / "oxford_sample.csv"
+    out_path = tmp_path / "oxford_summary.csv"
+    report_path = tmp_path / "oxford_report.md"
+    sample.to_csv(sample_path, index=False)
+    monkeypatch.setattr(config, "OXFORD_REAL_SAMPLE_CSV", sample_path)
+    monkeypatch.setattr(config, "OXFORD_REAL_CYCLE_SUMMARY_CSV", out_path)
+    monkeypatch.setattr(config, "OXFORD_REAL_DATA_REPORT", report_path)
+    monkeypatch.setattr(config, "OXFORD_FULL_MAT", tmp_path / "missing_full.mat")
+    monkeypatch.setattr(config, "OXFORD_EXAMPLE_MAT", tmp_path / "missing_example.mat")
+
+    summary = import_oxford_battery_data.build_oxford_cycle_summary(source="auto")
+    text = import_oxford_battery_data.build_report(summary)
+
+    assert out_path.exists()
+    assert report_path.exists()
+    assert "Oxford Battery Degradation Dataset 1" in text
+    assert "Parsed cells: 1" in text

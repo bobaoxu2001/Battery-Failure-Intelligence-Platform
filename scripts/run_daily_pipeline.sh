@@ -15,10 +15,11 @@
 #   10. Generate JMP-ready analysis files
 #   11. Generate model monitoring summary
 #   12. Generate the Markdown model-performance summary
-#   13. Generate public real-data validation
-#   14. Generate the hiring-manager packet + cell investigation case study
-#   15. Generate the project readiness scorecard
-#   16. Validate expected output files
+#   13. Generate model-release backtest + survival RUL validation
+#   14. Generate public NASA and Oxford real-data validation
+#   15. Generate the hiring-manager packet + cell investigation case study
+#   16. Generate the project readiness scorecard
+#   17. Validate expected output files
 #
 # Usage:
 #   bash scripts/run_daily_pipeline.sh            # full run, reuse models if present
@@ -34,7 +35,7 @@ cd "${ROOT}"
 PY="${PYTHON:-python3}"
 RETRAIN="${RETRAIN:-0}"
 MODELS_DIR="data/processed/models"
-TOTAL_STEPS=16
+TOTAL_STEPS=17
 
 step() { printf "\n\033[1;34m=== [%s/%s] %s ===\033[0m\n" "$1" "${TOTAL_STEPS}" "$2"; }
 models_ready() {
@@ -99,16 +100,21 @@ ${PY} -m src.models.monitor_drift
 step 12 "Generate model-performance summary"
 ${PY} -m src.models.evaluate_models
 
-step 13 "Generate public real-data validation"
-${PY} -m src.ingest.import_public_battery_data
+step 13 "Generate model-release backtest + survival RUL validation"
+${PY} -m src.models.model_release_backtest
+${PY} -m src.models.train_survival_rul_model
 
-step 14 "Generate hiring-manager packet + cell investigation case study"
+step 14 "Generate public NASA and Oxford real-data validation"
+${PY} -m src.ingest.import_public_battery_data
+${PY} -m src.ingest.import_oxford_battery_data
+
+step 15 "Generate hiring-manager packet + cell investigation case study"
 ${PY} -m src.reporting.generate_hiring_manager_packet
 
-step 15 "Generate project readiness scorecard"
+step 16 "Generate project readiness scorecard"
 ${PY} -m src.reporting.generate_project_scorecard
 
-step 16 "Validate expected output files"
+step 17 "Validate expected output files"
 bash scripts/validate_files.sh
 
 printf "\n\033[1;32mPipeline complete.\033[0m Outputs in data/processed/, reports/, dashboards/\n"

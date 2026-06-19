@@ -65,6 +65,17 @@ HIRING_MANAGER_PACKET = REPORTS_DIR / "hiring_manager_packet.md"
 CELL_INVESTIGATION_CASE_STUDY = REPORTS_DIR / "cell_investigation_case_study.md"
 REAL_DATA_VALIDATION_REPORT = REPORTS_DIR / "real_data_validation_summary.md"
 REAL_DATA_COVERAGE_REPORT = REPORTS_DIR / "real_data_coverage_and_limitations.md"
+MODEL_RELEASE_BACKTEST_CSV = REPORTS_DIR / "model_release_backtest_metrics.csv"
+MODEL_RELEASE_BACKTEST_REPORT = REPORTS_DIR / "model_release_backtest.md"
+MODEL_RELEASE_CALIBRATION_CSV = REPORTS_DIR / "model_release_calibration.csv"
+SURVIVAL_PREDICTIONS_CSV = REPORTS_DIR / "survival_rul_predictions.csv"
+SURVIVAL_RUL_REPORT = REPORTS_DIR / "survival_rul_summary.md"
+OXFORD_REAL_CYCLE_SUMMARY_CSV = PROCESSED_DIR / "oxford_real_cycle_summary.csv"
+OXFORD_REAL_SAMPLE_CSV = PUBLIC_SAMPLE_DIR / "oxford_real_cycle_summary_sample.csv"
+OXFORD_REAL_DATA_REPORT = REPORTS_DIR / "oxford_real_data_validation_summary.md"
+OXFORD_RAW_DIR = PUBLIC_RAW_DIR / "oxford"
+OXFORD_EXAMPLE_MAT = OXFORD_RAW_DIR / "ExampleDC_C1.mat"
+OXFORD_FULL_MAT = OXFORD_RAW_DIR / "Oxford_Battery_Degradation_Dataset_1.mat"
 
 # --------------------------------------------------------------------------- #
 # Reproducibility / scale
@@ -135,6 +146,7 @@ def ensure_dirs() -> None:
         RAW_DIR,
         PUBLIC_RAW_DIR,
         NASA_PROCESSED_CSV_DIR,
+        OXFORD_RAW_DIR,
         PUBLIC_SAMPLE_DIR,
         SYNTHETIC_DIR,
         PROCESSED_DIR,

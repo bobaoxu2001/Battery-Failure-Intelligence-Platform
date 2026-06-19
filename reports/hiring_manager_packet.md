@@ -1,6 +1,6 @@
 # Hiring Manager Review Packet
 
-_Generated: 2026-06-19 - fast review guide for a battery data-science hiring manager._
+_Generated: 2026-06-20 - fast review guide for a battery data-science hiring manager._
 
 ## First 60 Seconds
 

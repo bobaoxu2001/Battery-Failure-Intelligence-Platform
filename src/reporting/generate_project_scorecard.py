@@ -1,9 +1,8 @@
-"""Generate an evidence-based portfolio readiness scorecard.
+"""Generate an evidence-based project readiness scorecard.
 
-This report is intentionally blunt: it maps the target Battery Engineering Data
-Scientist contractor requirements to concrete repo artifacts. A row passes only
-when every listed artifact exists, so the final score is tied to the current
-worktree rather than README claims.
+This report is intentionally blunt: it maps engineering analytics competencies
+to concrete repo artifacts. A row passes only when every listed artifact exists,
+so the final score is tied to the current worktree rather than README claims.
 
 Run as a module::
 
@@ -34,10 +33,11 @@ ITEMS = [
         (
             config.ROOT / "src/models/train_soh_model.py",
             config.ROOT / "src/models/train_rul_model.py",
+            config.ROOT / "src/models/train_survival_rul_model.py",
             config.ROOT / "src/models/train_failure_classifier.py",
             config.ROOT / "src/models/score_cells.py",
         ),
-        "SOH, RUL and failure-risk models train, score, and persist metadata.",
+        "SOH, RUL, censored survival-style RUL, and failure-risk models train, score, and persist metadata.",
     ),
     ScorecardItem(
         "Battery engineering analytics",
@@ -52,9 +52,11 @@ ITEMS = [
         "Real public battery data validation",
         (
             config.ROOT / "src/ingest/import_public_battery_data.py",
+            config.ROOT / "src/ingest/import_oxford_battery_data.py",
             config.REAL_DATA_VALIDATION_REPORT,
+            config.OXFORD_REAL_DATA_REPORT,
         ),
-        "Optional NASA PCoE public battery aging data adapter validates degradation trends on real cells.",
+        "NASA PCoE plus Oxford public battery-aging adapters validate degradation trends across two real sources.",
     ),
     ScorecardItem(
         "SQL warehouse and data modeling",
@@ -98,10 +100,12 @@ ITEMS = [
         "Statistics and value-added analysis",
         (
             config.REPORTS_DIR / "model_performance_summary.md",
+            config.MODEL_RELEASE_BACKTEST_REPORT,
+            config.SURVIVAL_RUL_REPORT,
             config.MODEL_MONITORING_REPORT,
             config.MODEL_MONITORING_METRICS_CSV,
         ),
-        "Grouped validation, explainability, cohort PSI, risk mix, and recommended actions.",
+        "Grouped validation, release backtesting, censored survival RUL, explainability, cohort PSI, and risk mix.",
     ),
     ScorecardItem(
         "Urgent escalation reporting",
@@ -177,9 +181,9 @@ def build_report() -> str:
         "",
         f"## Overall Score: {score}",
         "",
-        f"Verdict: **{verdict}** for a 0-2 year Battery Engineering Data Scientist contractor portfolio.",
+        f"Verdict: **{verdict}** for an engineering analytics portfolio.",
         "",
-        "This scorecard does not claim proprietary battery experience. It shows the repo has concrete, runnable evidence for the role's expected data, ML, SQL, reporting, Unix, Tableau/JMP, and AI-workflow skills.",
+        "This scorecard does not claim proprietary battery experience. It shows the repo has concrete, runnable evidence for data ingestion, ML, SQL, reporting, Unix tooling, BI handoffs, and reusable AI-workflow skills.",
     ]
     md = "\n".join(lines) + "\n"
     config.PROJECT_READINESS_SCORECARD.write_text(md, encoding="utf-8")

@@ -7,8 +7,9 @@ life (RUL)**, and **failure-risk prediction**; and generates **automated enginee
 escalation reports** and **Tableau-ready dashboard outputs**.
 
 > **Data disclaimer:** the default end-to-end pipeline uses **synthetic,
-> physically-motivated battery data** generated locally. The repo also includes a
-> bundled validation sample and adapter for **public real NASA PCoE battery aging data**.
+> physically-motivated battery data** generated locally. The repo also includes
+> bundled validation samples and adapters for **public real NASA PCoE and Oxford
+> battery aging data**.
 > It does **not** use confidential company data and does **not** imply access to
 > any internal production system.
 
@@ -18,9 +19,10 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 
 **What this demonstrates (in 5 bullets):**
 - **End-to-end ownership** — raw telemetry → star-schema SQL warehouse → features → ML → automated reports/dashboards, orchestrated by one script and gated by CI + tests.
-- **Battery-reliability ML** — SOH, RUL, and failure-risk models with leakage-aware, cell-grouped validation and SHAP/permutation explainability.
-- **Honest data boundary** — default pipeline uses reproducible synthetic factory/usage/failure data; real public validation uses NASA PCoE battery-aging data.
-- **Large archive support** — parses NASA PCoE's original MATLAB `.mat` battery-aging archive directly when present locally; a small committed NASA sample keeps CI and fresh clones runnable.
+- **Battery-reliability ML** — SOH, RUL, censored survival-style RUL, and failure-risk models with leakage-aware validation and SHAP/permutation explainability.
+- **Model-release discipline** — manufacturing-cohort backtest, baseline comparison, threshold cost review, and probability calibration before treating a model as usable.
+- **Honest data boundary** — default pipeline uses reproducible synthetic factory/usage/failure data; real public validation uses NASA PCoE and Oxford battery-aging data.
+- **Large archive support** — parses NASA and Oxford MATLAB `.mat` archives directly when present locally; small committed samples keep CI and fresh clones runnable.
 - **Decision-ready reporting** — a ranked escalation queue with likely root cause + recommended follow-up per cell, plus Tableau-ready extracts and JMP handoff files.
 - **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, pytest + GitHub Actions, and explicit notes that production validation would require real factory, usage, and failure labels.
 
@@ -48,7 +50,10 @@ committed so you can read them on GitHub without running anything:
 - [**Hiring manager review packet**](reports/hiring_manager_packet.md) — the fastest proof path: what to inspect first, evidence map, interview hooks, and honest boundaries.
 - [**Single-cell investigation case study**](reports/cell_investigation_case_study.md) — one escalated cell with peer context, root-cause signal, and engineering follow-up.
 - [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / failure-risk metrics, confusion matrix, and top drivers.
+- [**Model release backtest**](reports/model_release_backtest.md) — later-cohort validation, baseline comparison, threshold cost, and calibration.
+- [**Censored RUL survival model**](reports/survival_rul_summary.md) — discrete-time hazard model for cells that have not yet crossed EOL.
 - [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
+- [**Real Oxford data validation**](reports/oxford_real_data_validation_summary.md) — second-source parser over Oxford pouch-cell cycling data.
 - [**Real-data limitations**](reports/real_data_coverage_and_limitations.md) — what is real, what remains synthetic, and what production validation would require.
 - [**Authorized production data contract**](docs/production_data_access/production_data_contract.md) — production-style schemas, access runbook, and validation plan without private data.
 - [**Public dataset expansion plan**](docs/public_battery_dataset_expansion_plan.md) — CALCE, Oxford, and Severson/MIT-Stanford datasets assessed for future adapters.
@@ -77,7 +82,8 @@ tests, CI, and reusable AI workflows.
 ```mermaid
 flowchart LR
     GEN[Synthetic data generator<br/>factory · cycles · usage · failures · raw logs] --> ING[Ingest & clean<br/>load_raw_data.py]
-    REAL[Public NASA battery data<br/>official .mat archive / mirror / sample] --> RV[Real-data validation<br/>capacity fade sanity check]
+    NASA[Public NASA battery data<br/>official .mat archive / mirror / sample] --> RV[Real-data validation<br/>capacity fade sanity check]
+    OXF[Public Oxford battery data<br/>official .mat archive / sample] --> RV
     PERL[parse_raw_logs.pl<br/>Perl telemetry parser] -.-> ING
     ING --> FEAT[Feature engineering<br/>cycle + cell features]
     FEAT --> WH[(SQLite/DuckDB warehouse<br/>dims · facts · marts)]
@@ -89,13 +95,15 @@ flowchart LR
     WH --> TAB[Tableau extracts<br/>+ mock dashboards]
     WH --> JMP[JMP handoff<br/>CSV + JSL]
     ML --> PERF[Model performance summary]
+    ML --> REL[Release backtest<br/>baselines · cost · calibration]
+    ML --> SURV[Survival RUL<br/>censored hazard model]
     SCORE --> MON[Monitoring<br/>cohort PSI + risk mix]
     RV --> SCORECARD[Readiness scorecard]
     AI[ai_workflows/*.md<br/>reusable LLM skills] -.-> ESC
     AI -.-> QC
 ```
 
-The whole thing is orchestrated by **`scripts/run_daily_pipeline.sh`** (15 steps),
+The whole thing is orchestrated by **`scripts/run_daily_pipeline.sh`** (17 steps),
 runs locally from a fresh clone with no database server, and is exercised in CI on
 every push.
 
@@ -226,6 +234,7 @@ given cell stay on one side of the split). Feature contracts are explicit in
 | --- | --- | --- | --- |
 | **State of Health** | `soh_current = discharge_cap / initial_cap` | Linear baseline vs RandomForest / GradientBoosting | **R² 0.948 · MAE 0.011 · RMSE 0.016** |
 | **Remaining Useful Life** | cycles until SOH < 80% | RandomForest vs GradientBoosting | **MAE 46 cycles · RMSE 70 · R² 0.926** |
+| **Censored RUL Survival** | time-to-80% SOH with right-censoring | Discrete-time logistic hazard model | See `reports/survival_rul_summary.md` |
 | **Failure Risk** | `escalation_required` | Logistic baseline vs RandomForest | **F1 0.857 · ROC-AUC 0.993 · Recall 1.00** |
 
 *From the latest 120-cell synthetic run; regenerated into
@@ -236,9 +245,14 @@ pipeline run. Numbers vary slightly with data scale / quick mode.*
 > very high ROC-AUC is *expected* — the synthetic labels are generated from known
 > degradation mechanisms, so a correct pipeline should recover them. These scores
 > validate that the **feature logic and the training/scoring path work end to end**;
-> they are **not** a claim of real-world production accuracy. The NASA real-data
-> layer is an independent **degradation sanity check**, and genuine production
+> they are **not** a claim of real-world production accuracy. The NASA/Oxford
+> real-data layer is an independent **degradation sanity check**, and genuine production
 > validation would require larger real factory / usage / failure datasets.
+
+The release backtest in [`reports/model_release_backtest.md`](reports/model_release_backtest.md)
+adds a stricter gate: train on older manufacturing cohorts, evaluate on later
+cells, compare against simple engineering baselines, review threshold cost, and
+inspect probability calibration.
 
 **Engineered features** include `capacity_fade_rate`, `resistance_growth_rate`,
 `rolling_capacity_mean_10`, `rolling_temperature_max_10`, `rolling_resistance_mean_10`,
@@ -259,9 +273,11 @@ pipeline run. Numbers vary slightly with data scale / quick mode.*
 3. Build features → 4. Build warehouse → 5. Train / reuse models →
 6. Score cells + write predictions to warehouse → 7. SQL quality checks →
 8. Escalation report → 9. Tableau extracts → 10. JMP files →
-11. Model monitoring → 12. Model performance summary → 13. Real-data validation →
-14. Hiring-manager packet + cell investigation → 15. Readiness scorecard →
-16. File validation.
+11. Model monitoring → 12. Model performance summary →
+13. Model-release backtest + survival RUL validation →
+14. NASA/Oxford real-data validation →
+15. Hiring-manager packet + cell investigation → 16. Readiness scorecard →
+17. File validation.
 
 Outputs are written to `data/processed/`, `reports/`, and `dashboards/`.
 
@@ -322,6 +338,7 @@ SOURCE=archive bash scripts/run_real_data_validation.sh # parse official NASA .m
 BATTERIES=all SOURCE=archive bash scripts/run_real_data_validation.sh
 BATTERY_IDS="B0005 B0006 B0049" SOURCE=archive bash scripts/run_real_data_validation.sh
 DOWNLOAD=1 bash scripts/run_real_data_validation.sh     # or fetch processed-CSV mirror
+python -m src.ingest.import_oxford_battery_data         # Oxford sample/full archive validation
 ```
 
 Explore interactively via the notebooks in [`notebooks/`](notebooks/) (requires
@@ -356,6 +373,7 @@ A readable daily standup version is written to
 
 - Processed synthetic battery data (`data/processed/*.csv`)
 - Optional real public NASA battery validation report (`reports/real_data_validation_summary.md`)
+- Optional real public Oxford battery validation report (`reports/oxford_real_data_validation_summary.md`)
 - Hiring-manager review packet and single-cell case study (`reports/hiring_manager_packet.md`, `reports/cell_investigation_case_study.md`)
 - Local SQL warehouse (`data/processed/battery_warehouse.db`)
 - Trained model artifacts (`data/processed/models/*.joblib`)
@@ -364,6 +382,8 @@ A readable daily standup version is written to
 - JMP-ready CSV + JSL starter analysis (`reports/jmp_*`)
 - Model monitoring / cohort drift summary (`reports/model_monitoring_*`)
 - Model performance summary (`reports/model_performance_summary.md`)
+- Model release backtest and calibration (`reports/model_release_backtest*`, `reports/model_release_calibration.csv`)
+- Censored RUL survival summary (`reports/survival_rul_summary.md`)
 - Evidence-based readiness scorecard (`reports/project_readiness_scorecard.md`)
 - Passing test suite + green CI
 
@@ -374,7 +394,8 @@ A readable daily standup version is written to
 `Python` · `pandas/numpy` · `scikit-learn` · `feature engineering` ·
 `SQL data warehousing & dimensional modeling` · `SQLite/DuckDB` ·
 `data-quality testing` · `time-series degradation modeling` ·
-`classification & regression` · `model explainability (SHAP / permutation)` ·
+`classification & regression` · `survival / censored RUL modeling` ·
+`release backtesting & calibration` · `model explainability (SHAP / permutation)` ·
 `reporting automation` · `Tableau dashboard design` · `JMP handoff files` ·
 `TCP/IP data-source preflight` · `Unix / Bash / Perl` ·
 `pytest` · `GitHub Actions CI` · `reusable AI/LLM workflows` ·

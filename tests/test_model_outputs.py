@@ -10,6 +10,7 @@ from src import config
 from src.models.monitor_drift import population_stability_index, psi_status
 from src.models import _common as C
 from src.models.score_cells import risk_tier
+from src.models.train_survival_rul_model import SurvivalBundle
 from src.reporting.generate_jmp_exports import JMP_COLUMNS
 
 
@@ -31,6 +32,21 @@ def jmp_export() -> pd.DataFrame:
 @pytest.fixture(scope="module")
 def monitoring_metrics() -> pd.DataFrame:
     return pd.read_csv(config.MODEL_MONITORING_METRICS_CSV)
+
+
+@pytest.fixture(scope="module")
+def release_metrics() -> pd.DataFrame:
+    return pd.read_csv(config.MODEL_RELEASE_BACKTEST_CSV)
+
+
+@pytest.fixture(scope="module")
+def release_calibration() -> pd.DataFrame:
+    return pd.read_csv(config.MODEL_RELEASE_CALIBRATION_CSV)
+
+
+@pytest.fixture(scope="module")
+def survival_predictions() -> pd.DataFrame:
+    return pd.read_csv(config.SURVIVAL_PREDICTIONS_CSV)
 
 
 # --- Prediction schema ------------------------------------------------------
@@ -142,6 +158,48 @@ def test_monitoring_metrics_have_psi_status(monitoring_metrics):
     required = {"feature", "reference_mean", "current_mean", "delta", "psi", "status"}
     assert required.issubset(monitoring_metrics.columns)
     assert monitoring_metrics["status"].isin({"ok", "watch", "alert", "unknown"}).all()
+
+
+def test_model_release_backtest_compares_models_to_baselines(release_metrics):
+    required_targets = {"SOH", "RUL", "Failure risk"}
+    assert required_targets.issubset(set(release_metrics["target"]))
+    approaches = set(release_metrics["approach"])
+    assert "fleet_median_fade_baseline" in approaches
+    assert "current_fade_to_eol_baseline" in approaches
+    assert "soh_station_rule_baseline" in approaches
+    assert release_metrics["value"].notna().all()
+
+
+def test_model_release_report_has_threshold_and_calibration_context(release_calibration):
+    text = config.MODEL_RELEASE_BACKTEST_REPORT.read_text(encoding="utf-8")
+    assert "Escalation Threshold Review" in text
+    assert "Probability Calibration" in text
+    assert "Recommended release threshold" in text
+    required = {"bin", "n", "mean_predicted_probability", "observed_escalation_rate"}
+    assert required.issubset(release_calibration.columns)
+    assert release_calibration["n"].sum() > 0
+
+
+def test_survival_rul_outputs_capture_censoring(survival_predictions):
+    required = {
+        "cell_id",
+        "event_observed",
+        "observed_duration_cycles",
+        "predicted_expected_eol_cycle",
+        "predicted_remaining_cycles_from_observed",
+        "event_probability_by_500_cycles",
+    }
+    assert required.issubset(survival_predictions.columns)
+    assert set(survival_predictions["event_observed"].unique()).issubset({0, 1})
+    assert survival_predictions["event_observed"].isin([0]).any(), "holdout should include censored cells"
+    assert survival_predictions["event_probability_by_500_cycles"].between(0, 1).all()
+
+
+def test_survival_model_bundle_loads_with_metrics():
+    bundle = SurvivalBundle.load()
+    assert "concordance_index" in bundle.metrics
+    assert bundle.interval_width > 0
+    assert "log_interval_end" in bundle.features
 
 
 def test_project_readiness_scorecard_is_complete():

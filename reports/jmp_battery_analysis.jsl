@@ -1,5 +1,5 @@
 // Battery Failure Intelligence - JMP starter analysis
-// Generated 2026-06-19; all data synthetic.
+// Generated 2026-06-20; all data synthetic.
 // Save this script next to jmp_cell_analysis.csv, open it in JMP, then run it.
 
 Names Default To Here(1);

@@ -1,6 +1,6 @@
 # Battery Cell Investigation Case Study
 
-_Generated: 2026-06-19 - synthetic factory/usage/failure data; no confidential data used._
+_Generated: 2026-06-20 - synthetic factory/usage/failure data; no confidential data used._
 
 ## Selected Cell
 

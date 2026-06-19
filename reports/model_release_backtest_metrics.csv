@@ -1,0 +1,21 @@
+target,approach,metric,value
+SOH,RandomForest,MAE,0.010335551996154506
+SOH,RandomForest,RMSE,0.01498719078921979
+SOH,RandomForest,R2,0.9376895767758009
+SOH,fleet_median_fade_baseline,MAE,0.01923535331966245
+SOH,fleet_median_fade_baseline,RMSE,0.02721654002206776
+SOH,fleet_median_fade_baseline,R2,0.7945121935736247
+RUL,GradientBoosting,MAE,48.06560775366863
+RUL,GradientBoosting,RMSE,72.36086713474346
+RUL,GradientBoosting,R2,0.9065447776778028
+RUL,current_fade_to_eol_baseline,MAE,56.966868553433386
+RUL,current_fade_to_eol_baseline,RMSE,107.66061392181524
+RUL,current_fade_to_eol_baseline,R2,0.7931241698678085
+Failure risk,LogisticRegression,precision,0.75
+Failure risk,LogisticRegression,recall,1.0
+Failure risk,LogisticRegression,f1,0.8571428571428571
+Failure risk,LogisticRegression,roc_auc,0.9888888888888889
+Failure risk,soh_station_rule_baseline,precision,0.3333333333333333
+Failure risk,soh_station_rule_baseline,recall,0.5
+Failure risk,soh_station_rule_baseline,f1,0.4
+Failure risk,soh_station_rule_baseline,roc_auc,0.6527777777777778
