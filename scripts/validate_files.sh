@@ -63,6 +63,8 @@ check_file "reports/model_performance_summary.md"      3
 check_file "reports/model_monitoring_summary.md"       3
 check_file "reports/model_monitoring_metrics.csv"      2
 check_file "reports/project_readiness_scorecard.md"    3
+check_file "reports/hiring_manager_packet.md"          3
+check_file "reports/cell_investigation_case_study.md"  3
 check_file "reports/real_data_validation_summary.md"   3
 check_file "reports/real_data_coverage_and_limitations.md" 3
 check_file "reports/jmp_cell_analysis.csv"             2

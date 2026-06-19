@@ -34,7 +34,19 @@ def _read_or_generate() -> dict[str, pd.DataFrame]:
     if not all(path.exists() for path in expected.values()):
         log.info("Synthetic source files missing -> generating them now")
         return generate()
+    if not _sources_match_config(expected):
+        log.info("Synthetic source files do not match the active run mode -> regenerating them now")
+        return generate()
     return {name: pd.read_csv(path) for name, path in expected.items()}
+
+
+def _sources_match_config(expected: dict[str, object]) -> bool:
+    """Return True when existing synthetic sources match the active config size."""
+    try:
+        factory_rows = len(pd.read_csv(expected["factory"], usecols=["cell_id"]))
+    except Exception:
+        return False
+    return factory_rows == config.N_CELLS
 
 
 def _validate(name: str, frame: pd.DataFrame) -> None:

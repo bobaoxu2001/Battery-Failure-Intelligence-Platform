@@ -16,8 +16,9 @@
 #   11. Generate model monitoring summary
 #   12. Generate the Markdown model-performance summary
 #   13. Generate public real-data validation
-#   14. Generate the project readiness scorecard
-#   15. Validate expected output files
+#   14. Generate the hiring-manager packet + cell investigation case study
+#   15. Generate the project readiness scorecard
+#   16. Validate expected output files
 #
 # Usage:
 #   bash scripts/run_daily_pipeline.sh            # full run, reuse models if present
@@ -33,7 +34,7 @@ cd "${ROOT}"
 PY="${PYTHON:-python3}"
 RETRAIN="${RETRAIN:-0}"
 MODELS_DIR="data/processed/models"
-TOTAL_STEPS=15
+TOTAL_STEPS=16
 
 step() { printf "\n\033[1;34m=== [%s/%s] %s ===\033[0m\n" "$1" "${TOTAL_STEPS}" "$2"; }
 models_ready() {
@@ -101,10 +102,13 @@ ${PY} -m src.models.evaluate_models
 step 13 "Generate public real-data validation"
 ${PY} -m src.ingest.import_public_battery_data
 
-step 14 "Generate project readiness scorecard"
+step 14 "Generate hiring-manager packet + cell investigation case study"
+${PY} -m src.reporting.generate_hiring_manager_packet
+
+step 15 "Generate project readiness scorecard"
 ${PY} -m src.reporting.generate_project_scorecard
 
-step 15 "Validate expected output files"
+step 16 "Validate expected output files"
 bash scripts/validate_files.sh
 
 printf "\n\033[1;32mPipeline complete.\033[0m Outputs in data/processed/, reports/, dashboards/\n"
