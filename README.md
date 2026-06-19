@@ -1,4 +1,4 @@
-# 🔋 Battery Failure Intelligence Platform
+# Battery Failure Intelligence Platform
 
 **An end-to-end battery engineering analytics platform** that ingests lithium-ion
 cycling, impedance, synthetic factory, usage, and failure-event data; builds a SQL
@@ -6,7 +6,7 @@ data warehouse; trains ML models for **state-of-health (SOH)**, **remaining usef
 life (RUL)**, and **failure-risk prediction**; and generates **automated engineering
 escalation reports** and **Tableau-ready dashboard outputs**.
 
-> ⚠️ **Data disclaimer:** the default end-to-end pipeline uses **synthetic,
+> **Data disclaimer:** the default end-to-end pipeline uses **synthetic,
 > physically-motivated battery data** generated locally. The repo also includes a
 > bundled validation sample and adapter for **public real NASA PCoE battery aging data**.
 > It does **not** use confidential company data and does **not** imply access to
@@ -14,7 +14,7 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 
 ---
 
-## 👋 For recruiters / hiring managers
+## For recruiters / hiring managers
 
 **What this demonstrates (in 5 bullets):**
 - **End-to-end ownership** — raw telemetry → star-schema SQL warehouse → features → ML → automated reports/dashboards, orchestrated by one script and gated by CI + tests.
@@ -26,7 +26,7 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 
 For a quick technical audit, start with the
 [readiness scorecard](reports/project_readiness_scorecard.md), then skim the
-generated reports under [Demo outputs](#-demo-outputs).
+generated reports under [Demo outputs](#demo-outputs).
 
 **Run it in 3 commands:**
 ```bash
@@ -35,25 +35,25 @@ bash scripts/run_daily_pipeline.sh   # 2. generate everything end-to-end
 pytest -q                            # 3. run the test suite
 ```
 
-Skip to [**Demo outputs**](#-demo-outputs) to read the generated reports without running anything.
+Skip to [**Demo outputs**](#demo-outputs) to read the generated reports without running anything.
 
 ---
 
-## 📂 Demo outputs
+## Demo outputs
 
 Prefer to skim the results first? These are real artifacts the pipeline generates,
 committed so you can read them on GitHub without running anything:
 
-- 🚨 [**Daily escalation summary**](reports/high_risk_cells_summary.md) — ranked high-risk cells with likely root cause + recommended follow-up.
-- 🧑‍💼 [**Hiring manager review packet**](reports/hiring_manager_packet.md) — the fastest proof path: what to inspect first, evidence map, interview hooks, and honest boundaries.
-- 🔎 [**Single-cell investigation case study**](reports/cell_investigation_case_study.md) — one escalated cell with peer context, root-cause signal, and engineering follow-up.
-- 📈 [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / failure-risk metrics, confusion matrix, and top drivers.
-- 🔋 [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
-- 🧭 [**Real-data limitations**](reports/real_data_coverage_and_limitations.md) — what is real, what remains synthetic, and what production validation would require.
-- 🔐 [**Authorized production data contract**](docs/production_data_access/production_data_contract.md) — production-style schemas, access runbook, and validation plan without private data.
-- 🌐 [**Public dataset expansion plan**](docs/public_battery_dataset_expansion_plan.md) — CALCE, Oxford, and Severson/MIT-Stanford datasets assessed for future adapters.
-- 📊 [**Tableau dashboard blueprint**](dashboards/tableau_dashboard_blueprint.md) — the 4 dashboard pages (fields + charts per page).
-- ✅ [**Project readiness scorecard**](reports/project_readiness_scorecard.md) — evidence-based mapping of each engineering competency to a concrete artifact.
+- [**Daily escalation summary**](reports/high_risk_cells_summary.md) — ranked high-risk cells with likely root cause + recommended follow-up.
+- [**Hiring manager review packet**](reports/hiring_manager_packet.md) — the fastest proof path: what to inspect first, evidence map, interview hooks, and honest boundaries.
+- [**Single-cell investigation case study**](reports/cell_investigation_case_study.md) — one escalated cell with peer context, root-cause signal, and engineering follow-up.
+- [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / failure-risk metrics, confusion matrix, and top drivers.
+- [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
+- [**Real-data limitations**](reports/real_data_coverage_and_limitations.md) — what is real, what remains synthetic, and what production validation would require.
+- [**Authorized production data contract**](docs/production_data_access/production_data_contract.md) — production-style schemas, access runbook, and validation plan without private data.
+- [**Public dataset expansion plan**](docs/public_battery_dataset_expansion_plan.md) — CALCE, Oxford, and Severson/MIT-Stanford datasets assessed for future adapters.
+- [**Tableau dashboard blueprint**](dashboards/tableau_dashboard_blueprint.md) — the 4 dashboard pages (fields + charts per page).
+- [**Project readiness scorecard**](reports/project_readiness_scorecard.md) — evidence-based mapping of each engineering competency to a concrete artifact.
 
 ---
 
@@ -354,18 +354,18 @@ A readable daily standup version is written to
 
 ## What you get after a run
 
-- ✅ Processed synthetic battery data (`data/processed/*.csv`)
-- ✅ Optional real public NASA battery validation report (`reports/real_data_validation_summary.md`)
-- ✅ Hiring-manager review packet and single-cell case study (`reports/hiring_manager_packet.md`, `reports/cell_investigation_case_study.md`)
-- ✅ Local SQL warehouse (`data/processed/battery_warehouse.db`)
-- ✅ Trained model artifacts (`data/processed/models/*.joblib`)
-- ✅ Escalation report CSV + high-risk markdown summary (`reports/`)
-- ✅ Tableau-ready extracts + mock dashboards (`dashboards/`)
-- ✅ JMP-ready CSV + JSL starter analysis (`reports/jmp_*`)
-- ✅ Model monitoring / cohort drift summary (`reports/model_monitoring_*`)
-- ✅ Model performance summary (`reports/model_performance_summary.md`)
-- ✅ Evidence-based readiness scorecard (`reports/project_readiness_scorecard.md`)
-- ✅ Passing test suite + green CI
+- Processed synthetic battery data (`data/processed/*.csv`)
+- Optional real public NASA battery validation report (`reports/real_data_validation_summary.md`)
+- Hiring-manager review packet and single-cell case study (`reports/hiring_manager_packet.md`, `reports/cell_investigation_case_study.md`)
+- Local SQL warehouse (`data/processed/battery_warehouse.db`)
+- Trained model artifacts (`data/processed/models/*.joblib`)
+- Escalation report CSV + high-risk markdown summary (`reports/`)
+- Tableau-ready extracts + mock dashboards (`dashboards/`)
+- JMP-ready CSV + JSL starter analysis (`reports/jmp_*`)
+- Model monitoring / cohort drift summary (`reports/model_monitoring_*`)
+- Model performance summary (`reports/model_performance_summary.md`)
+- Evidence-based readiness scorecard (`reports/project_readiness_scorecard.md`)
+- Passing test suite + green CI
 
 ---
 
