@@ -46,6 +46,7 @@ check_file "data/processed/failure_events.csv" 2
 check_file "data/processed/parsed_raw_logs.csv" 2
 check_file "data/processed/cycle_features.csv" 100
 check_file "data/processed/cell_features.csv"  2
+check_file "data/processed/early_warning_features.csv" 2
 check_file "data/public_samples/nasa_real_cycle_summary_sample.csv" 100
 check_file "data/public_samples/oxford_real_cycle_summary_sample.csv" 10
 check_file "data/processed/nasa_real_cycle_summary.csv" 100
@@ -57,6 +58,7 @@ check_file "data/processed/model_predictions.csv" 2
 check_file "data/processed/models/soh_model.joblib"     1
 check_file "data/processed/models/rul_model.joblib"     1
 check_file "data/processed/models/failure_model.joblib" 1
+check_file "data/processed/models/early_warning_failure_model.joblib" 1
 check_file "data/processed/models/survival_rul_model.joblib" 1
 
 echo "==> Validating reports + dashboard extracts"
@@ -66,6 +68,7 @@ check_file "reports/model_performance_summary.md"      3
 check_file "reports/model_release_backtest.md"         3
 check_file "reports/model_release_backtest_metrics.csv" 2
 check_file "reports/model_release_calibration.csv"     2
+check_file "reports/early_warning_model_summary.md"    3
 check_file "reports/survival_rul_summary.md"           3
 check_file "reports/survival_rul_predictions.csv"      2
 check_file "reports/model_monitoring_summary.md"       3

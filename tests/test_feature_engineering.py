@@ -9,6 +9,7 @@ from src import config
 from src.features.build_features import (
     CELL_FEATURE_COLUMNS,
     CYCLE_FEATURE_COLUMNS,
+    EARLY_WARNING_FEATURE_COLUMNS,
     _initial_capacity,
     _leave_one_out_group_rate,
     _remaining_cycles,
@@ -25,6 +26,11 @@ def cell_features() -> pd.DataFrame:
     return pd.read_csv(config.CELL_FEATURES_CSV)
 
 
+@pytest.fixture(scope="module")
+def early_warning_features() -> pd.DataFrame:
+    return pd.read_csv(config.EARLY_WARNING_FEATURES_CSV)
+
+
 def test_cycle_features_have_required_columns(cycle_features):
     missing = [c for c in CYCLE_FEATURE_COLUMNS if c not in cycle_features.columns]
     assert not missing, f"cycle_features missing columns: {missing}"
@@ -33,6 +39,29 @@ def test_cycle_features_have_required_columns(cycle_features):
 def test_cell_features_have_required_columns(cell_features):
     missing = [c for c in CELL_FEATURE_COLUMNS if c not in cell_features.columns]
     assert not missing, f"cell_features missing columns: {missing}"
+
+
+def test_early_warning_features_have_required_columns(early_warning_features):
+    missing = [c for c in EARLY_WARNING_FEATURE_COLUMNS if c not in early_warning_features.columns]
+    assert not missing, f"early_warning_features missing columns: {missing}"
+
+
+def test_early_warning_features_exclude_lifetime_leakage_columns(early_warning_features):
+    banned = {
+        "final_soh",
+        "cycle_count",
+        "peak_temperature_max",
+        "mean_temperature_max",
+        "capacity_fade_rate",
+        "resistance_growth_rate",
+        "batch_failure_rate",
+    }
+    assert not banned.intersection(early_warning_features.columns)
+
+
+def test_early_warning_features_one_row_per_cell(early_warning_features):
+    assert early_warning_features["cell_id"].is_unique
+    assert (early_warning_features["early_cycle_count"] <= 50).all()
 
 
 def test_no_missing_values_in_key_columns(cycle_features):

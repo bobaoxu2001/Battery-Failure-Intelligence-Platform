@@ -91,6 +91,8 @@ CREATE TABLE fact_model_predictions (
     predicted_remaining_cycles REAL,
     failure_probability       REAL,
     risk_tier                 TEXT,
+    early_warning_probability REAL,
+    early_warning_risk_tier   TEXT,
     top_risk_driver           TEXT
 );
 

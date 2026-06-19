@@ -10,7 +10,14 @@ Two feature tables are produced:
         (extrapolated for cells that never reach EOL within their recorded life)
 
 ``cell_features`` (one row per cell)
-    Aggregated lifetime features used by the failure-risk classifier. Target:
+    Aggregated lifetime features used by the retrospective failure-investigation
+    classifier. Target:
+      * ``escalation_required`` (engineering escalation needed)
+
+``early_warning_features`` (one row per cell)
+    First-50-cycle features used by the early-warning classifier. It excludes
+    lifetime-only fields such as final SOH, final fade rate, and peak lifetime
+    temperature so it can be used before the full outcome is known. Target:
       * ``escalation_required`` (engineering escalation needed)
 
 Run as a module::
@@ -56,6 +63,22 @@ CELL_FEATURE_COLUMNS = [
     "high_temp_exposure_hours",
     "low_temp_exposure_hours",
     "batch_failure_rate",
+    "station_anomaly_rate",
+]
+
+EARLY_WARNING_FEATURE_COLUMNS = [
+    "early_cycle_count",
+    "soh_at_cycle_20",
+    "soh_at_cycle_50",
+    "capacity_fade_rate_50",
+    "resistance_growth_rate_50",
+    "resistance_mean_50",
+    "temperature_mean_50",
+    "temperature_max_50",
+    "voltage_min_50",
+    "test_temperature",
+    "charge_current",
+    "discharge_current",
     "station_anomaly_rate",
 ]
 
@@ -216,6 +239,57 @@ def _build_cell_features(
     return df.reset_index()
 
 
+def _build_early_warning_features(
+    cycles: pd.DataFrame,
+    usage: pd.DataFrame,
+    factory: pd.DataFrame,
+    failures: pd.DataFrame,
+    station_rate: dict,
+    window: int = 50,
+) -> pd.DataFrame:
+    """Build first-window features for early failure warning.
+
+    The target is still the eventual escalation label, but every feature must be
+    observable by cycle ``window``. This keeps the early-warning model separate
+    from the retrospective investigation model that intentionally uses lifetime
+    context such as ``final_soh``.
+    """
+    factory_idx = factory.set_index("cell_id")
+    fail_idx = failures.set_index("cell_id")
+    rows = []
+    for cell_id, group in cycles.groupby("cell_id", sort=False):
+        g = group.sort_values("cycle_index").head(window).copy()
+        if g.empty:
+            continue
+        init_cap = float(g["discharge_capacity_ah"].head(5).mean())
+        init_res = float(g["internal_resistance_mohm"].head(5).mean())
+        soh = g["discharge_capacity_ah"] / init_cap
+        res_growth = g["internal_resistance_mohm"] / init_res - 1.0
+        row = {
+            "cell_id": cell_id,
+            "early_cycle_count": int(g["cycle_index"].max()),
+            "soh_at_cycle_20": float(soh.iloc[min(len(soh), 20) - 1]),
+            "soh_at_cycle_50": float(soh.iloc[-1]),
+            "capacity_fade_rate_50": float((1.0 - soh.iloc[-1]) / max(g["cycle_index"].iloc[-1], 1)),
+            "resistance_growth_rate_50": float(res_growth.iloc[-1] / max(g["cycle_index"].iloc[-1], 1)),
+            "resistance_mean_50": float(g["internal_resistance_mohm"].mean()),
+            "temperature_mean_50": float(g["temperature_mean"].mean()),
+            "temperature_max_50": float(g["temperature_max"].max()),
+            "voltage_min_50": float(g["voltage_min"].min()),
+            "test_temperature": float(factory_idx.loc[cell_id, "test_temperature"]),
+            "charge_current": float(factory_idx.loc[cell_id, "charge_current"]),
+            "discharge_current": float(factory_idx.loc[cell_id, "discharge_current"]),
+            "lot_id": factory_idx.loc[cell_id, "lot_id"],
+            "station_id": factory_idx.loc[cell_id, "station_id"],
+            "batch_id": factory_idx.loc[cell_id, "batch_id"],
+            "station_anomaly_rate": station_rate.get(cell_id, 0.0),
+            "escalation_required": int(fail_idx.loc[cell_id, "escalation_required"]),
+            "failure_severity": fail_idx.loc[cell_id, "failure_severity"],
+        }
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
 def build() -> dict[str, pd.DataFrame]:
     """Build and persist both feature tables; return them as a dict."""
     config.ensure_dirs()
@@ -229,14 +303,21 @@ def build() -> dict[str, pd.DataFrame]:
 
     cycle_features = _build_cycle_features(cycles, usage, factory, batch_rate, station_rate)
     cell_features = _build_cell_features(cycle_features, usage, factory, failures, batch_rate, station_rate)
+    early_warning_features = _build_early_warning_features(cycles, usage, factory, failures, station_rate)
 
     cycle_features.to_csv(config.CYCLE_FEATURES_CSV, index=False)
     cell_features.to_csv(config.CELL_FEATURES_CSV, index=False)
+    early_warning_features.to_csv(config.EARLY_WARNING_FEATURES_CSV, index=False)
 
     log_dataframe(log, "cycle_features", cycle_features)
     log_dataframe(log, "cell_features", cell_features)
+    log_dataframe(log, "early_warning_features", early_warning_features)
     log.info("Class balance (escalation_required): %s", cell_features["escalation_required"].value_counts().to_dict())
-    return {"cycle_features": cycle_features, "cell_features": cell_features}
+    return {
+        "cycle_features": cycle_features,
+        "cell_features": cell_features,
+        "early_warning_features": early_warning_features,
+    }
 
 
 if __name__ == "__main__":

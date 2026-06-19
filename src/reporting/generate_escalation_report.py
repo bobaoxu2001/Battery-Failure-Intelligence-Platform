@@ -61,7 +61,7 @@ def generate() -> pd.DataFrame:
 
     # Machine-readable escalation CSV with the contracted columns.
     out_cols = [
-        "cell_id", "lot_id", "station_id", "failure_probability", "predicted_soh",
+        "cell_id", "lot_id", "station_id", "failure_probability", "early_warning_probability", "predicted_soh",
         "predicted_remaining_cycles", "likely_root_cause", "recommended_follow_up",
     ]
     escalation_csv = queue[out_cols].sort_values("failure_probability", ascending=False)
@@ -111,15 +111,15 @@ def _write_markdown(queue: pd.DataFrame) -> None:
         "",
         "## Top cells in the escalation queue",
         "",
-        "| Cell | Lot | Station | Risk | Fail prob | Pred SOH | Rem. cycles | Likely root cause | Recommended follow-up |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Cell | Lot | Station | Risk | Investigation prob | Early-warning prob | Pred SOH | Rem. cycles | Likely root cause | Recommended follow-up |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for _, r in top.iterrows():
         cause = r["top_risk_driver"]
         follow = FOLLOW_UP.get(cause, DEFAULT_FOLLOW_UP)
         lines.append(
             f"| {r['cell_id']} | {r['lot_id']} | {r['station_id']} | {r['risk_tier']} | "
-            f"{r['failure_probability']:.3f} | {r['predicted_soh']:.3f} | "
+            f"{r['failure_probability']:.3f} | {r['early_warning_probability']:.3f} | {r['predicted_soh']:.3f} | "
             f"{r['predicted_remaining_cycles']:.0f} | {cause} | {follow} |"
         )
 

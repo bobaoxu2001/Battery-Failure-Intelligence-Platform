@@ -3,8 +3,10 @@
 For each cell we take its latest cycle snapshot and produce:
   * predicted_soh              (SOH regressor on the current snapshot)
   * predicted_remaining_cycles (RUL regressor on the current snapshot)
-  * failure_probability        (failure classifier on lifetime features)
-  * risk_tier                  (discretised failure probability)
+  * failure_probability        (retrospective classifier on lifetime features)
+  * risk_tier                  (discretised retrospective probability)
+  * early_warning_probability  (first-50-cycle early-warning classifier)
+  * early_warning_risk_tier    (discretised early-warning probability)
   * top_risk_driver            (most influential adverse feature for that cell)
 
 Predictions are written to ``model_predictions.csv`` and into the warehouse
@@ -78,9 +80,11 @@ def score() -> pd.DataFrame:
     soh_model = C.ModelBundle.load(C.SOH_MODEL_PATH)
     rul_model = C.ModelBundle.load(C.RUL_MODEL_PATH)
     fail_model = C.ModelBundle.load(C.FAILURE_MODEL_PATH)
+    early_model = C.ModelBundle.load(C.EARLY_WARNING_MODEL_PATH)
 
     cycle_feats = pd.read_csv(config.CYCLE_FEATURES_CSV)
     cell_feats = pd.read_csv(config.CELL_FEATURES_CSV).set_index("cell_id")
+    early_feats = pd.read_csv(config.EARLY_WARNING_FEATURES_CSV).set_index("cell_id")
 
     # Latest cycle snapshot per cell for the SOH/RUL regressors.
     latest = cycle_feats.sort_values("cycle_index").groupby("cell_id").tail(1).set_index("cell_id")
@@ -89,6 +93,7 @@ def score() -> pd.DataFrame:
     predicted_soh = soh_model.estimator.predict(latest[soh_model.features].astype(float))
     predicted_rul = rul_model.estimator.predict(latest[rul_model.features].astype(float))
     failure_prob = fail_model.estimator.predict_proba(cell_feats[fail_model.features].astype(float))[:, 1]
+    early_prob = early_model.estimator.predict_proba(early_feats.loc[cell_feats.index, early_model.features].astype(float))[:, 1]
 
     drivers = _top_drivers(cell_feats, fail_model.importance)
 
@@ -99,6 +104,8 @@ def score() -> pd.DataFrame:
         "predicted_remaining_cycles": np.round(np.clip(predicted_rul, 0, None), 1),
         "failure_probability": np.round(failure_prob, 4),
         "risk_tier": [risk_tier(p) for p in failure_prob],
+        "early_warning_probability": np.round(early_prob, 4),
+        "early_warning_risk_tier": [risk_tier(p) for p in early_prob],
         "top_risk_driver": drivers,
     })
 

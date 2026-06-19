@@ -53,7 +53,8 @@ def survival_predictions() -> pd.DataFrame:
 def test_prediction_columns_present(predictions):
     required = {
         "cell_id", "prediction_date", "predicted_soh", "predicted_remaining_cycles",
-        "failure_probability", "risk_tier", "top_risk_driver",
+        "failure_probability", "risk_tier", "early_warning_probability",
+        "early_warning_risk_tier", "top_risk_driver",
     }
     assert required.issubset(predictions.columns)
 
@@ -69,12 +70,14 @@ def test_no_missing_required_prediction_values(predictions):
 def test_prediction_value_ranges(predictions):
     assert predictions["predicted_soh"].between(0, 1.05).all()
     assert predictions["failure_probability"].between(0, 1).all()
+    assert predictions["early_warning_probability"].between(0, 1).all()
     assert (predictions["predicted_remaining_cycles"] >= 0).all()
 
 
 def test_risk_tier_values_are_valid(predictions):
     allowed = {"Low", "Medium", "High", "Critical"}
     assert set(predictions["risk_tier"]).issubset(allowed)
+    assert set(predictions["early_warning_risk_tier"]).issubset(allowed)
 
 
 # --- Risk-tier assignment logic --------------------------------------------
@@ -180,6 +183,14 @@ def test_model_release_report_has_threshold_and_calibration_context(release_cali
     assert release_calibration["n"].sum() > 0
 
 
+def test_early_warning_report_documents_feature_boundary():
+    text = config.EARLY_WARNING_REPORT.read_text(encoding="utf-8")
+    assert "first 50 cycles" in text
+    assert "Excluded" in text
+    assert "final_soh" in text
+    assert "retrospective investigation model" in text
+
+
 def test_survival_rul_outputs_capture_censoring(survival_predictions):
     required = {
         "cell_id",
@@ -241,6 +252,7 @@ def test_model_bundles_load_with_metrics():
         (C.SOH_MODEL_PATH, "soh_current"),
         (C.RUL_MODEL_PATH, "remaining_cycles"),
         (C.FAILURE_MODEL_PATH, "escalation_required"),
+        (C.EARLY_WARNING_MODEL_PATH, "escalation_required"),
     ]:
         bundle = C.ModelBundle.load(path)
         assert bundle.target == target
@@ -257,3 +269,16 @@ def test_soh_features_exclude_capacity_leakage():
 def test_failure_features_exclude_batch_failure_rate():
     # Guard against target leakage via the batch escalation rate.
     assert "batch_failure_rate" not in C.FAILURE_FEATURES
+
+
+def test_early_warning_features_exclude_lifetime_leakage():
+    banned = {
+        "final_soh",
+        "cycle_count",
+        "peak_temperature_max",
+        "mean_temperature_max",
+        "capacity_fade_rate",
+        "resistance_growth_rate",
+        "batch_failure_rate",
+    }
+    assert not banned.intersection(C.EARLY_WARNING_FEATURES)

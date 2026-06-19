@@ -46,9 +46,10 @@ Top drivers (permutation_importance):
 | `station_anomaly_rate` | 0.0043 |
 | `batch_failure_rate` | 0.0043 |
 
-## 3. Failure-risk classification
+## 3. Retrospective failure-risk classification
 - **Algorithm:** LogisticRegression
 - **Target:** `escalation_required` (engineering escalation needed)
+- **Use case:** post-failure investigation and pass/fail comparison using lifetime features such as `final_soh`
 - **Validation:** stratified cell-level hold-out
 
 | Metric | Value |
@@ -83,7 +84,31 @@ Top drivers (permutation_importance):
 | `peak_temperature_max` | 0.0167 |
 | `resistance_growth_rate` | 0.0133 |
 
-## 4. Leading drivers of high-risk degradation
+## 4. Early-warning failure classification
+- **Algorithm:** RandomForest
+- **Target:** eventual `escalation_required`
+- **Use case:** first-50-cycle triage before full lifetime outcomes are known
+- **Validation:** stratified cell-level hold-out
+
+| Metric | Value |
+| --- | --- |
+| Precision | 1.000 |
+| Recall    | 0.667 |
+| F1        | 0.800 |
+| ROC-AUC   | 1.000 |
+
+Top drivers (permutation_importance):
+
+| Feature | Importance |
+| --- | --- |
+| `soh_at_cycle_50` | 0.0500 |
+| `capacity_fade_rate_50` | 0.0400 |
+| `temperature_mean_50` | 0.0100 |
+| `early_cycle_count` | 0.0000 |
+| `resistance_mean_50` | 0.0000 |
+| `temperature_max_50` | 0.0000 |
+
+## 5. Leading drivers of high-risk degradation
 Across the failure classifier, the dominant degradation drivers are the
 engineered fade/resistance/thermal features — consistent with the physics of
 lithium-ion ageing (capacity fade + impedance growth accelerated by thermal and

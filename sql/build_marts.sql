@@ -22,6 +22,8 @@ SELECT
     p.predicted_remaining_cycles,
     p.failure_probability,
     p.risk_tier,
+    p.early_warning_probability,
+    p.early_warning_risk_tier,
     p.top_risk_driver,
     fe.escalation_required,
     fe.failure_severity
@@ -61,6 +63,8 @@ SELECT
     s.station_id,
     s.usage_profile,
     s.failure_probability,
+    s.early_warning_probability,
+    s.early_warning_risk_tier,
     s.predicted_soh,
     s.predicted_remaining_cycles,
     s.last_soh,

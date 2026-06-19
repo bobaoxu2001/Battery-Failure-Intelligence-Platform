@@ -1,6 +1,6 @@
 target,approach,metric,value
-SOH,RandomForest,MAE,0.010335551996154506
-SOH,RandomForest,RMSE,0.01498719078921979
+SOH,RandomForest,MAE,0.010335551996154503
+SOH,RandomForest,RMSE,0.014987190789219788
 SOH,RandomForest,R2,0.9376895767758009
 SOH,fleet_median_fade_baseline,MAE,0.01923535331966245
 SOH,fleet_median_fade_baseline,RMSE,0.02721654002206776

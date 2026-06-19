@@ -1,33 +1,33 @@
-cell_id,lot_id,station_id,usage_profile,failure_probability,predicted_soh,predicted_remaining_cycles,last_soh,capacity_fade_rate,resistance_growth_rate,peak_temperature_max,risk_tier,top_risk_driver,failure_severity
-CELL-00032,LOT-009,ST-08,thermal_stress,1.0,0.6606,0.0,0.5444,0.000876,0.005989,53.98,Critical,Accelerated capacity fade,critical
-CELL-00069,LOT-001,ST-06,thermal_stress,1.0,0.6267,0.0,0.5919,0.000718,0.004999,52.95,Critical,Accelerated capacity fade,critical
-CELL-00074,LOT-009,ST-05,thermal_stress,0.9997,0.7535,0.0,0.7891,0.000698,0.00562,49.88,Critical,Accelerated capacity fade,critical
-CELL-00049,LOT-003,ST-01,thermal_stress,0.9979,0.7135,0.0,0.7011,0.000543,0.003792,53.36,Critical,Accelerated capacity fade,critical
-CELL-00060,LOT-008,ST-05,thermal_stress,0.9976,0.8316,0.0,0.8125,0.000642,0.003696,49.71,Critical,Accelerated capacity fade,critical
-CELL-00090,LOT-001,ST-01,fast_charge_heavy,0.996,0.7483,0.0,0.7875,0.000587,0.010443,44.34,Critical,Accelerated capacity fade,critical
-CELL-00037,LOT-008,ST-04,thermal_stress,0.9954,0.7946,0.0,0.7749,0.000638,0.003951,58.2,Critical,Accelerated capacity fade,critical
-CELL-00027,LOT-009,ST-08,fast_charge_heavy,0.9952,0.7657,0.0,0.7582,0.000631,0.006663,45.13,Critical,Accelerated capacity fade,high
-CELL-00003,LOT-010,ST-01,thermal_stress,0.9868,0.725,0.0,0.7113,0.000466,0.003309,53.22,Critical,Low state of health,critical
-CELL-00014,LOT-009,ST-02,heavy,0.9855,0.7637,0.0,0.7415,0.000624,0.003881,42.77,Critical,Accelerated capacity fade,high
-CELL-00051,LOT-008,ST-04,fast_charge_heavy,0.983,0.8084,0.0,0.8094,0.000585,0.005792,50.22,Critical,Accelerated capacity fade,critical
-CELL-00045,LOT-011,ST-07,thermal_stress,0.9765,0.7851,2.9,0.6908,0.000494,0.002898,63.39,Critical,Test-station anomaly signal,critical
-CELL-00102,LOT-001,ST-05,heavy,0.9442,0.7766,0.0,0.7581,0.000596,0.003987,43.92,Critical,Accelerated capacity fade,high
-CELL-00019,LOT-011,ST-02,fast_charge_heavy,0.9389,0.763,8.4,0.7389,0.000456,0.004109,45.15,Critical,Accelerated capacity fade,high
-CELL-00117,LOT-006,ST-04,thermal_stress,0.9386,0.7832,11.4,0.7845,0.000416,0.002694,61.56,Critical,Sustained thermal exposure,medium
-CELL-00083,LOT-007,ST-02,thermal_stress,0.9187,0.8781,125.8,0.8573,0.000506,0.002223,47.95,Critical,Accelerated capacity fade,high
-CELL-00030,LOT-003,ST-01,thermal_stress,0.9132,0.8695,145.7,0.8643,0.000473,0.002519,48.75,Critical,Accelerated capacity fade,critical
-CELL-00041,LOT-010,ST-03,fast_charge_heavy,0.906,0.7724,10.1,0.7182,0.000443,0.004248,49.56,Critical,Low state of health,critical
-CELL-00070,LOT-002,ST-04,thermal_stress,0.8517,0.8154,15.1,0.7992,0.000422,0.002352,60.32,Critical,Sustained thermal exposure,critical
-CELL-00002,LOT-010,ST-01,thermal_stress,0.8497,0.857,76.2,0.8414,0.000461,0.001828,50.15,Critical,Accelerated capacity fade,critical
-CELL-00095,LOT-004,ST-03,thermal_stress,0.8302,0.8678,110.8,0.8584,0.000513,0.002704,49.5,Critical,Accelerated capacity fade,critical
-CELL-00007,LOT-006,ST-06,thermal_stress,0.8183,0.8367,82.9,0.8348,0.000398,0.002393,49.59,Critical,Accelerated capacity fade,medium
-CELL-00067,LOT-007,ST-04,thermal_stress,0.8147,0.8022,21.7,0.8047,0.000393,0.002799,59.05,Critical,Sustained thermal exposure,medium
-CELL-00068,LOT-007,ST-06,thermal_stress,0.8087,0.8603,132.9,0.8551,0.000415,0.002312,49.62,Critical,Accelerated capacity fade,critical
-CELL-00058,LOT-010,ST-03,thermal_stress,0.7479,0.8299,46.3,0.8173,0.000417,0.002429,49.74,High,Accelerated capacity fade,critical
-CELL-00120,LOT-003,ST-05,fast_charge_heavy,0.7347,0.767,17.5,0.7741,0.000377,0.006882,46.43,High,Low state of health,high
-CELL-00044,LOT-010,ST-06,thermal_stress,0.7102,0.9008,196.8,0.8856,0.000413,0.001958,48.29,High,Accelerated capacity fade,high
-CELL-00034,LOT-006,ST-08,thermal_stress,0.6818,0.8301,81.2,0.8287,0.000366,0.0021,51.68,High,Sustained thermal exposure,medium
-CELL-00116,LOT-005,ST-04,fast_charge_heavy,0.6806,0.7791,15.2,0.7748,0.000397,0.00421,52.27,High,Test-station anomaly signal,medium
-CELL-00085,LOT-002,ST-02,thermal_stress,0.6285,0.8436,146.4,0.8491,0.000372,0.002607,48.31,High,Sustained thermal exposure,medium
-CELL-00035,LOT-002,ST-04,thermal_stress,0.6277,0.8293,95.1,0.8385,0.000368,0.002592,56.9,High,Sustained thermal exposure,medium
-CELL-00087,LOT-010,ST-06,heavy,0.4026,0.7626,5.7,0.7535,0.00041,0.001957,44.08,Medium,Low state of health,high
+cell_id,lot_id,station_id,usage_profile,failure_probability,early_warning_probability,early_warning_risk_tier,predicted_soh,predicted_remaining_cycles,last_soh,capacity_fade_rate,resistance_growth_rate,peak_temperature_max,risk_tier,top_risk_driver,failure_severity
+CELL-00032,LOT-009,ST-08,thermal_stress,1.0,0.934,Critical,0.6606,0.0,0.5444,0.000876,0.005989,53.98,Critical,Accelerated capacity fade,critical
+CELL-00069,LOT-001,ST-06,thermal_stress,1.0,0.9374,Critical,0.6267,0.0,0.5919,0.000718,0.004999,52.95,Critical,Accelerated capacity fade,critical
+CELL-00074,LOT-009,ST-05,thermal_stress,0.9997,0.9354,Critical,0.7535,0.0,0.7891,0.000698,0.00562,49.88,Critical,Accelerated capacity fade,critical
+CELL-00049,LOT-003,ST-01,thermal_stress,0.9979,0.8238,Critical,0.7135,0.0,0.7011,0.000543,0.003792,53.36,Critical,Accelerated capacity fade,critical
+CELL-00060,LOT-008,ST-05,thermal_stress,0.9976,0.9414,Critical,0.8316,0.0,0.8125,0.000642,0.003696,49.71,Critical,Accelerated capacity fade,critical
+CELL-00090,LOT-001,ST-01,fast_charge_heavy,0.996,0.806,Critical,0.7483,0.0,0.7875,0.000587,0.010443,44.34,Critical,Accelerated capacity fade,critical
+CELL-00037,LOT-008,ST-04,thermal_stress,0.9954,0.8338,Critical,0.7946,0.0,0.7749,0.000638,0.003951,58.2,Critical,Accelerated capacity fade,critical
+CELL-00027,LOT-009,ST-08,fast_charge_heavy,0.9952,0.9282,Critical,0.7657,0.0,0.7582,0.000631,0.006663,45.13,Critical,Accelerated capacity fade,high
+CELL-00003,LOT-010,ST-01,thermal_stress,0.9868,0.6967,High,0.725,0.0,0.7113,0.000466,0.003309,53.22,Critical,Low state of health,critical
+CELL-00014,LOT-009,ST-02,heavy,0.9855,0.779,High,0.7637,0.0,0.7415,0.000624,0.003881,42.77,Critical,Accelerated capacity fade,high
+CELL-00051,LOT-008,ST-04,fast_charge_heavy,0.983,0.8759,Critical,0.8084,0.0,0.8094,0.000585,0.005792,50.22,Critical,Accelerated capacity fade,critical
+CELL-00045,LOT-011,ST-07,thermal_stress,0.9765,0.4548,Medium,0.7851,2.9,0.6908,0.000494,0.002898,63.39,Critical,Test-station anomaly signal,critical
+CELL-00102,LOT-001,ST-05,heavy,0.9442,0.6531,High,0.7766,0.0,0.7581,0.000596,0.003987,43.92,Critical,Accelerated capacity fade,high
+CELL-00019,LOT-011,ST-02,fast_charge_heavy,0.9389,0.7692,High,0.763,8.4,0.7389,0.000456,0.004109,45.15,Critical,Accelerated capacity fade,high
+CELL-00117,LOT-006,ST-04,thermal_stress,0.9386,0.3228,Medium,0.7832,11.4,0.7845,0.000416,0.002694,61.56,Critical,Sustained thermal exposure,medium
+CELL-00083,LOT-007,ST-02,thermal_stress,0.9187,0.9268,Critical,0.8781,125.8,0.8573,0.000506,0.002223,47.95,Critical,Accelerated capacity fade,high
+CELL-00030,LOT-003,ST-01,thermal_stress,0.9132,0.6972,High,0.8695,145.7,0.8643,0.000473,0.002519,48.75,Critical,Accelerated capacity fade,critical
+CELL-00041,LOT-010,ST-03,fast_charge_heavy,0.906,0.5951,High,0.7724,10.1,0.7182,0.000443,0.004248,49.56,Critical,Low state of health,critical
+CELL-00070,LOT-002,ST-04,thermal_stress,0.8517,0.8626,Critical,0.8154,15.1,0.7992,0.000422,0.002352,60.32,Critical,Sustained thermal exposure,critical
+CELL-00002,LOT-010,ST-01,thermal_stress,0.8497,0.4355,Medium,0.857,76.2,0.8414,0.000461,0.001828,50.15,Critical,Accelerated capacity fade,critical
+CELL-00095,LOT-004,ST-03,thermal_stress,0.8302,0.8969,Critical,0.8678,110.8,0.8584,0.000513,0.002704,49.5,Critical,Accelerated capacity fade,critical
+CELL-00007,LOT-006,ST-06,thermal_stress,0.8183,0.1938,Low,0.8367,82.9,0.8348,0.000398,0.002393,49.59,Critical,Accelerated capacity fade,medium
+CELL-00067,LOT-007,ST-04,thermal_stress,0.8147,0.3871,Medium,0.8022,21.7,0.8047,0.000393,0.002799,59.05,Critical,Sustained thermal exposure,medium
+CELL-00068,LOT-007,ST-06,thermal_stress,0.8087,0.6626,High,0.8603,132.9,0.8551,0.000415,0.002312,49.62,Critical,Accelerated capacity fade,critical
+CELL-00058,LOT-010,ST-03,thermal_stress,0.7479,0.7608,High,0.8299,46.3,0.8173,0.000417,0.002429,49.74,High,Accelerated capacity fade,critical
+CELL-00120,LOT-003,ST-05,fast_charge_heavy,0.7347,0.6503,High,0.767,17.5,0.7741,0.000377,0.006882,46.43,High,Low state of health,high
+CELL-00044,LOT-010,ST-06,thermal_stress,0.7102,0.8787,Critical,0.9008,196.8,0.8856,0.000413,0.001958,48.29,High,Accelerated capacity fade,high
+CELL-00034,LOT-006,ST-08,thermal_stress,0.6818,0.3072,Medium,0.8301,81.2,0.8287,0.000366,0.0021,51.68,High,Sustained thermal exposure,medium
+CELL-00116,LOT-005,ST-04,fast_charge_heavy,0.6806,0.1992,Low,0.7791,15.2,0.7748,0.000397,0.00421,52.27,High,Test-station anomaly signal,medium
+CELL-00085,LOT-002,ST-02,thermal_stress,0.6285,0.3269,Medium,0.8436,146.4,0.8491,0.000372,0.002607,48.31,High,Sustained thermal exposure,medium
+CELL-00035,LOT-002,ST-04,thermal_stress,0.6277,0.4007,Medium,0.8293,95.1,0.8385,0.000368,0.002592,56.9,High,Sustained thermal exposure,medium
+CELL-00087,LOT-010,ST-06,heavy,0.4026,0.6327,High,0.7626,5.7,0.7535,0.00041,0.001957,44.08,Medium,Low state of health,high

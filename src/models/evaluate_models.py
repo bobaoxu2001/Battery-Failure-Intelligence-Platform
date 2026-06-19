@@ -40,6 +40,7 @@ def build_report() -> str:
     soh = C.ModelBundle.load(C.SOH_MODEL_PATH)
     rul = C.ModelBundle.load(C.RUL_MODEL_PATH)
     fail = C.ModelBundle.load(C.FAILURE_MODEL_PATH)
+    early = C.ModelBundle.load(C.EARLY_WARNING_MODEL_PATH)
 
     cm = fail.metrics["confusion_matrix"]
     quick = " (quick mode)" if config.QUICK_MODE else ""
@@ -74,9 +75,10 @@ _Generated: {date.today().isoformat()} • all data synthetic; no confidential d
 
 {_importance_md(rul)}
 
-## 3. Failure-risk classification
+## 3. Retrospective failure-risk classification
 - **Algorithm:** {fail.algorithm}
 - **Target:** `escalation_required` (engineering escalation needed)
+- **Use case:** post-failure investigation and pass/fail comparison using lifetime features such as `final_soh`
 - **Validation:** stratified cell-level hold-out
 
 | Metric | Value |
@@ -102,7 +104,22 @@ Confusion matrix (rows = actual, cols = predicted):
 
 {_importance_md(fail)}
 
-## 4. Leading drivers of high-risk degradation
+## 4. Early-warning failure classification
+- **Algorithm:** {early.algorithm}
+- **Target:** eventual `escalation_required`
+- **Use case:** first-50-cycle triage before full lifetime outcomes are known
+- **Validation:** stratified cell-level hold-out
+
+| Metric | Value |
+| --- | --- |
+| Precision | {early.metrics['precision']:.3f} |
+| Recall    | {early.metrics['recall']:.3f} |
+| F1        | {early.metrics['f1']:.3f} |
+| ROC-AUC   | {early.metrics['roc_auc']:.3f} |
+
+{_importance_md(early)}
+
+## 5. Leading drivers of high-risk degradation
 Across the failure classifier, the dominant degradation drivers are the
 engineered fade/resistance/thermal features — consistent with the physics of
 lithium-ion ageing (capacity fade + impedance growth accelerated by thermal and

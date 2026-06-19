@@ -35,9 +35,10 @@ ITEMS = [
             config.ROOT / "src/models/train_rul_model.py",
             config.ROOT / "src/models/train_survival_rul_model.py",
             config.ROOT / "src/models/train_failure_classifier.py",
+            config.ROOT / "src/models/train_early_warning_classifier.py",
             config.ROOT / "src/models/score_cells.py",
         ),
-        "SOH, RUL, censored survival-style RUL, and failure-risk models train, score, and persist metadata.",
+        "SOH, RUL, censored survival-style RUL, retrospective failure investigation, and early-warning classifiers train and persist metadata.",
     ),
     ScorecardItem(
         "Battery engineering analytics",
@@ -101,11 +102,12 @@ ITEMS = [
         (
             config.REPORTS_DIR / "model_performance_summary.md",
             config.MODEL_RELEASE_BACKTEST_REPORT,
+            config.EARLY_WARNING_REPORT,
             config.SURVIVAL_RUL_REPORT,
             config.MODEL_MONITORING_REPORT,
             config.MODEL_MONITORING_METRICS_CSV,
         ),
-        "Grouped validation, release backtesting, censored survival RUL, explainability, cohort PSI, and risk mix.",
+        "Grouped validation, release backtesting, early-warning leakage boundary, censored survival RUL, explainability, cohort PSI, and risk mix.",
     ),
     ScorecardItem(
         "Urgent escalation reporting",

@@ -133,6 +133,8 @@ EXPECTED_SCHEMA: dict[str, list[str]] = {
         "predicted_remaining_cycles",
         "failure_probability",
         "risk_tier",
+        "early_warning_probability",
+        "early_warning_risk_tier",
         "top_risk_driver",
         "feature_snapshot_id",
     ],

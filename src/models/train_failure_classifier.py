@@ -1,9 +1,14 @@
-"""Train the failure-risk / escalation classifier.
+"""Train the retrospective failure-risk / escalation classifier.
 
 Target:  ``escalation_required`` (cell needs engineering escalation).
 Approach: Logistic Regression baseline vs. RandomForestClassifier on a
 stratified cell-level split; the higher-F1 model is kept. Reports precision,
 recall, F1, ROC-AUC and the confusion matrix.
+
+This is a retrospective investigation model: it intentionally uses lifetime
+features such as ``final_soh`` to help compare pass/fail cells and identify
+likely failure drivers after enough lifecycle data exists. It is not the
+early-warning model.
 
 Run as a module::
 
@@ -53,7 +58,7 @@ def train() -> C.ModelBundle:
     name, est, metrics = best
     importance = C.importance_table(est, X_te, y_te, C.FAILURE_FEATURES)
     bundle = C.ModelBundle(
-        name="failure_classifier", target="escalation_required", features=C.FAILURE_FEATURES,
+        name="retrospective_failure_classifier", target="escalation_required", features=C.FAILURE_FEATURES,
         estimator=est, metrics=metrics, importance=importance, algorithm=name,
     )
     bundle.save(C.FAILURE_MODEL_PATH)

@@ -62,8 +62,10 @@ RUL_FEATURES = [
     "station_anomaly_rate",
 ]
 
-# Failure classifier uses lifetime engineering signals. batch_failure_rate is
-# deliberately excluded (it embeds the escalation target -> leakage).
+# Retrospective failure-investigation classifier uses lifetime engineering
+# signals. This is appropriate for post-failure cause investigation, not early
+# warning. batch_failure_rate is deliberately excluded because it embeds the
+# escalation target -> leakage.
 FAILURE_FEATURES = [
     "final_soh",
     "capacity_fade_rate",
@@ -75,6 +77,25 @@ FAILURE_FEATURES = [
     "avg_depth_of_discharge",
     "high_temp_exposure_hours",
     "low_temp_exposure_hours",
+    "station_anomaly_rate",
+]
+
+# Early-warning classifier uses only features observable by cycle 50 plus
+# factory/test condition context. It must not use final_soh, lifetime fade rate,
+# lifetime peak temperature, full-life cycle_count, or post-outcome labels.
+EARLY_WARNING_FEATURES = [
+    "early_cycle_count",
+    "soh_at_cycle_20",
+    "soh_at_cycle_50",
+    "capacity_fade_rate_50",
+    "resistance_growth_rate_50",
+    "resistance_mean_50",
+    "temperature_mean_50",
+    "temperature_max_50",
+    "voltage_min_50",
+    "test_temperature",
+    "charge_current",
+    "discharge_current",
     "station_anomaly_rate",
 ]
 
@@ -207,3 +228,4 @@ class ModelBundle:
 SOH_MODEL_PATH = config.MODELS_DIR / "soh_model.joblib"
 RUL_MODEL_PATH = config.MODELS_DIR / "rul_model.joblib"
 FAILURE_MODEL_PATH = config.MODELS_DIR / "failure_model.joblib"
+EARLY_WARNING_MODEL_PATH = config.MODELS_DIR / "early_warning_failure_model.joblib"

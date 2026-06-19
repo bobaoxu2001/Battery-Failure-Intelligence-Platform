@@ -1,10 +1,10 @@
 # Battery Failure Intelligence Platform
 
-**An end-to-end battery engineering analytics platform** that ingests lithium-ion
-cycling, impedance, synthetic factory, usage, and failure-event data; builds a SQL
-data warehouse; trains ML models for **state-of-health (SOH)**, **remaining useful
-life (RUL)**, and **failure-risk prediction**; and generates **automated engineering
-escalation reports** and **Tableau-ready dashboard outputs**.
+**A battery failure analytics platform for engineering investigation and early
+warning.** It turns synthetic production-style cell, cycle, factory, usage, and
+failure data into a SQL warehouse, leakage-aware ML models, model-release
+backtests, and escalation reports that explain which cells, lots, stations, or
+conditions deserve engineering review.
 
 > **Data disclaimer:** the default end-to-end pipeline uses **synthetic,
 > physically-motivated battery data** generated locally. The repo also includes
@@ -12,19 +12,17 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 > battery aging data**.
 > It does **not** use confidential company data and does **not** imply access to
 > any internal production system.
+>
+> This is a synthetic production-style analytics platform, not a validated production battery model.
 
 ---
 
-## For recruiters / hiring managers
+## 30-second read
 
-**What this demonstrates (in 5 bullets):**
-- **End-to-end ownership** — raw telemetry → star-schema SQL warehouse → features → ML → automated reports/dashboards, orchestrated by one script and gated by CI + tests.
-- **Battery-reliability ML** — SOH, RUL, censored survival-style RUL, and failure-risk models with leakage-aware validation and SHAP/permutation explainability.
-- **Model-release discipline** — manufacturing-cohort backtest, baseline comparison, threshold cost review, and probability calibration before treating a model as usable.
-- **Honest data boundary** — default pipeline uses reproducible synthetic factory/usage/failure data; real public validation uses NASA PCoE and Oxford battery-aging data.
-- **Large archive support** — parses NASA and Oxford MATLAB `.mat` archives directly when present locally; small committed samples keep CI and fresh clones runnable.
-- **Decision-ready reporting** — a ranked escalation queue with likely root cause + recommended follow-up per cell, plus Tableau-ready extracts and JMP handoff files.
-- **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, pytest + GitHub Actions, and explicit notes that production validation would require real factory, usage, and failure labels.
+- **Question answered:** if 200 cells run and 20 fail, how do we compare pass/fail cells, control batch/test-condition bias, and turn model signals into engineering investigation?
+- **Two failure-model modes:** retrospective investigation can use lifetime features such as `final_soh`; early warning only uses first-50-cycle features.
+- **Validation discipline:** grouped splits, release backtest, baseline comparison, threshold cost review, calibration, drift checks, and explicit synthetic/real-data boundaries.
+- **Real-data sanity checks:** NASA PCoE and Oxford public aging datasets validate degradation parsing, not production accuracy.
 
 For a quick technical audit, start with the
 [readiness scorecard](reports/project_readiness_scorecard.md), then skim the
@@ -49,7 +47,8 @@ committed so you can read them on GitHub without running anything:
 - [**Daily escalation summary**](reports/high_risk_cells_summary.md) — ranked high-risk cells with likely root cause + recommended follow-up.
 - [**Hiring manager review packet**](reports/hiring_manager_packet.md) — the fastest proof path: what to inspect first, evidence map, interview hooks, and honest boundaries.
 - [**Single-cell investigation case study**](reports/cell_investigation_case_study.md) — one escalated cell with peer context, root-cause signal, and engineering follow-up.
-- [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / failure-risk metrics, confusion matrix, and top drivers.
+- [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / retrospective failure / early-warning failure metrics.
+- [**Early-warning failure model**](reports/early_warning_model_summary.md) — first-50-cycle model with explicit leakage boundary.
 - [**Model release backtest**](reports/model_release_backtest.md) — later-cohort validation, baseline comparison, threshold cost, and calibration.
 - [**Censored RUL survival model**](reports/survival_rul_summary.md) — discrete-time hazard model for cells that have not yet crossed EOL.
 - [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
@@ -235,7 +234,8 @@ given cell stay on one side of the split). Feature contracts are explicit in
 | **State of Health** | `soh_current = discharge_cap / initial_cap` | Linear baseline vs RandomForest / GradientBoosting | **R² 0.948 · MAE 0.011 · RMSE 0.016** |
 | **Remaining Useful Life** | cycles until SOH < 80% | RandomForest vs GradientBoosting | **MAE 46 cycles · RMSE 70 · R² 0.926** |
 | **Censored RUL Survival** | time-to-80% SOH with right-censoring | Discrete-time logistic hazard model | See `reports/survival_rul_summary.md` |
-| **Failure Risk** | `escalation_required` | Logistic baseline vs RandomForest | **F1 0.857 · ROC-AUC 0.993 · Recall 1.00** |
+| **Retrospective Failure Investigation** | `escalation_required` using lifetime features | Logistic baseline vs RandomForest | Used for pass/fail comparison and likely driver analysis |
+| **Early-Warning Failure Risk** | eventual `escalation_required` using first 50 cycles only | Logistic baseline vs RandomForest | Used for early triage before lifetime outcome is known |
 
 *From the latest 120-cell synthetic run; regenerated into
 [`reports/model_performance_summary.md`](reports/model_performance_summary.md) every
@@ -248,6 +248,11 @@ pipeline run. Numbers vary slightly with data scale / quick mode.*
 > they are **not** a claim of real-world production accuracy. The NASA/Oxford
 > real-data layer is an independent **degradation sanity check**, and genuine production
 > validation would require larger real factory / usage / failure datasets.
+
+The failure models are deliberately split:
+
+- **Retrospective investigation model:** can use lifetime features such as `final_soh`, lifetime fade rate, peak temperature, and full cycle count. Use it after enough data exists to compare failed vs passed cells and investigate likely causes.
+- **Early-warning model:** uses only first-50-cycle measurements plus factory/test condition context. It excludes `final_soh`, lifetime peak temperature, full-life cycle count, and post-outcome fields.
 
 The release backtest in [`reports/model_release_backtest.md`](reports/model_release_backtest.md)
 adds a stricter gate: train on older manufacturing cohorts, evaluate on later
@@ -274,7 +279,7 @@ inspect probability calibration.
 6. Score cells + write predictions to warehouse → 7. SQL quality checks →
 8. Escalation report → 9. Tableau extracts → 10. JMP files →
 11. Model monitoring → 12. Model performance summary →
-13. Model-release backtest + survival RUL validation →
+13. Model-release backtest + early-warning + survival RUL validation →
 14. NASA/Oxford real-data validation →
 15. Hiring-manager packet + cell investigation → 16. Readiness scorecard →
 17. File validation.
@@ -382,6 +387,7 @@ A readable daily standup version is written to
 - JMP-ready CSV + JSL starter analysis (`reports/jmp_*`)
 - Model monitoring / cohort drift summary (`reports/model_monitoring_*`)
 - Model performance summary (`reports/model_performance_summary.md`)
+- Early-warning failure model summary (`reports/early_warning_model_summary.md`)
 - Model release backtest and calibration (`reports/model_release_backtest*`, `reports/model_release_calibration.csv`)
 - Censored RUL survival summary (`reports/survival_rul_summary.md`)
 - Evidence-based readiness scorecard (`reports/project_readiness_scorecard.md`)

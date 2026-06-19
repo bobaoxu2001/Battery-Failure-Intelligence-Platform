@@ -41,12 +41,13 @@ step() { printf "\n\033[1;34m=== [%s/%s] %s ===\033[0m\n" "$1" "${TOTAL_STEPS}" 
 models_ready() {
     [[ -f "${MODELS_DIR}/soh_model.joblib" \
         && -f "${MODELS_DIR}/rul_model.joblib" \
-        && -f "${MODELS_DIR}/failure_model.joblib" ]]
+        && -f "${MODELS_DIR}/failure_model.joblib" \
+        && -f "${MODELS_DIR}/early_warning_failure_model.joblib" ]]
 }
 models_need_training() {
     [[ "${RETRAIN}" == "1" ]] && return 0
     models_ready || return 0
-    for feature in data/processed/cycle_features.csv data/processed/cell_features.csv; do
+    for feature in data/processed/cycle_features.csv data/processed/cell_features.csv data/processed/early_warning_features.csv; do
         for model in "${MODELS_DIR}/soh_model.joblib" "${MODELS_DIR}/rul_model.joblib" "${MODELS_DIR}/failure_model.joblib"; do
             [[ "${feature}" -nt "${model}" ]] && return 0
         done
@@ -75,6 +76,7 @@ if models_need_training; then
     ${PY} -m src.models.train_soh_model
     ${PY} -m src.models.train_rul_model
     ${PY} -m src.models.train_failure_classifier
+    ${PY} -m src.models.train_early_warning_classifier
 else
     echo "  Existing models are present and newer than feature tables - reusing"
 fi
@@ -102,6 +104,7 @@ ${PY} -m src.models.evaluate_models
 
 step 13 "Generate model-release backtest + survival RUL validation"
 ${PY} -m src.models.model_release_backtest
+${PY} -m src.models.train_early_warning_classifier
 ${PY} -m src.models.train_survival_rul_model
 
 step 14 "Generate public NASA and Oxford real-data validation"

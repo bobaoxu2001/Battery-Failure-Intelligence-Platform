@@ -45,6 +45,7 @@ USAGE_CSV = PROCESSED_DIR / "usage.csv"
 FAILURES_CSV = PROCESSED_DIR / "failure_events.csv"
 CYCLE_FEATURES_CSV = PROCESSED_DIR / "cycle_features.csv"
 CELL_FEATURES_CSV = PROCESSED_DIR / "cell_features.csv"
+EARLY_WARNING_FEATURES_CSV = PROCESSED_DIR / "early_warning_features.csv"
 PREDICTIONS_CSV = PROCESSED_DIR / "model_predictions.csv"
 NASA_REAL_CYCLE_SUMMARY_CSV = PROCESSED_DIR / "nasa_real_cycle_summary.csv"
 NASA_REAL_SAMPLE_CSV = PUBLIC_SAMPLE_DIR / "nasa_real_cycle_summary_sample.csv"
@@ -68,6 +69,7 @@ REAL_DATA_COVERAGE_REPORT = REPORTS_DIR / "real_data_coverage_and_limitations.md
 MODEL_RELEASE_BACKTEST_CSV = REPORTS_DIR / "model_release_backtest_metrics.csv"
 MODEL_RELEASE_BACKTEST_REPORT = REPORTS_DIR / "model_release_backtest.md"
 MODEL_RELEASE_CALIBRATION_CSV = REPORTS_DIR / "model_release_calibration.csv"
+EARLY_WARNING_REPORT = REPORTS_DIR / "early_warning_model_summary.md"
 SURVIVAL_PREDICTIONS_CSV = REPORTS_DIR / "survival_rul_predictions.csv"
 SURVIVAL_RUL_REPORT = REPORTS_DIR / "survival_rul_summary.md"
 OXFORD_REAL_CYCLE_SUMMARY_CSV = PROCESSED_DIR / "oxford_real_cycle_summary.csv"
@@ -133,6 +135,7 @@ ESCALATION_COLUMNS = [
     "lot_id",
     "station_id",
     "failure_probability",
+    "early_warning_probability",
     "predicted_soh",
     "predicted_remaining_cycles",
     "likely_root_cause",
