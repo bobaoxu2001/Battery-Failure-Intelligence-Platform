@@ -8,6 +8,7 @@
 # Usage:
 #   bash scripts/run_real_data_validation.sh                  # auto source
 #   SOURCE=archive bash scripts/run_real_data_validation.sh   # force official .mat archive
+#   SOURCE=archive BATTERIES=all bash scripts/run_real_data_validation.sh
 #   DOWNLOAD=1 bash scripts/run_real_data_validation.sh       # fetch processed-CSV mirror
 
 set -euo pipefail
@@ -19,10 +20,20 @@ cd "${ROOT}"
 PY="${PYTHON:-python3}"
 DOWNLOAD="${DOWNLOAD:-0}"
 SOURCE="${SOURCE:-auto}"
+BATTERIES="${BATTERIES:-}"
 
 args=(--source "${SOURCE}")
 if [[ "${DOWNLOAD}" == "1" ]]; then
     args+=(--download)
+fi
+if [[ "${BATTERIES}" == "all" ]]; then
+    args+=(--all-available)
+elif [[ -n "${BATTERIES}" ]]; then
+    IFS=',' read -ra battery_ids <<< "${BATTERIES}"
+    for battery_id in "${battery_ids[@]}"; do
+        battery_id="${battery_id//[[:space:]]/}"
+        [[ -n "${battery_id}" ]] && args+=(--battery-id "${battery_id}")
+    done
 fi
 
 # Expand safely under `set -u` on bash 3.2 (macOS default).

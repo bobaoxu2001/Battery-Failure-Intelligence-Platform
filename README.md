@@ -19,9 +19,10 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 **What this demonstrates (in 5 bullets):**
 - **End-to-end ownership** — raw telemetry → star-schema SQL warehouse → features → ML → automated reports/dashboards, orchestrated by one script and gated by CI + tests.
 - **Battery-reliability ML** — SOH, RUL, and failure-risk models with leakage-aware, cell-grouped validation and SHAP/permutation explainability.
-- **Real public data** — parses NASA PCoE's original MATLAB `.mat` battery-aging archive directly (not just a mirror) and recovers physically sensible degradation.
+- **Honest data boundary** — default pipeline uses reproducible synthetic factory/usage/failure data; real public validation uses NASA PCoE battery-aging data.
+- **Large archive support** — parses NASA PCoE's original MATLAB `.mat` battery-aging archive directly when present locally; a small committed NASA sample keeps CI and fresh clones runnable.
 - **Decision-ready reporting** — a ranked escalation queue with likely root cause + recommended follow-up per cell, plus Tableau-ready extracts and JMP handoff files.
-- **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, and pytest + GitHub Actions.
+- **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, pytest + GitHub Actions, and explicit notes that production validation would require real factory, usage, and failure labels.
 
 **Why it fits the Apple Battery DS Contractor role:** the JD centers on Python ML,
 SQL/data-warehousing, factory/usage/failure analysis, urgent escalation reporting,
@@ -48,6 +49,8 @@ committed so you can read them on GitHub without running anything:
 - 🚨 [**Daily escalation summary**](reports/high_risk_cells_summary.md) — ranked high-risk cells with likely root cause + recommended follow-up.
 - 📈 [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / failure-risk metrics, confusion matrix, and top drivers.
 - 🔋 [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
+- 🧭 [**Real-data limitations**](reports/real_data_coverage_and_limitations.md) — what is real, what remains synthetic, and what production validation would require.
+- 🌐 [**Public dataset expansion plan**](docs/public_battery_dataset_expansion_plan.md) — CALCE, Oxford, and Severson/MIT-Stanford datasets assessed for future adapters.
 - 📊 [**Tableau dashboard blueprint**](dashboards/tableau_dashboard_blueprint.md) — the 4 dashboard pages (fields + charts per page).
 - ✅ [**Project readiness scorecard**](reports/project_readiness_scorecard.md) — evidence-based mapping of each role competency to a concrete artifact.
 
@@ -167,6 +170,8 @@ order of authority:
    Place the archive at `data/raw/5. Battery Data Set/` (the nested
    `BatteryAgingARC_*.zip` files NASA ships) and it is used automatically:
    `SOURCE=archive bash scripts/run_real_data_validation.sh`
+   To scan every battery discoverable in the local archive:
+   `SOURCE=archive BATTERIES=all bash scripts/run_real_data_validation.sh`
 2. **Processed-CSV mirror** — a lightweight third-party convenience mirror for
    quick demos when the official archive is not on disk:
    `DOWNLOAD=1 bash scripts/run_real_data_validation.sh`
@@ -178,7 +183,7 @@ Upstream source (≈200MB): `https://phm-datasets.s3.amazonaws.com/NASA/5.+Batte
 The official archive is gitignored (too large to commit); CI runs on the bundled
 sample, while local runs that have the archive use the authoritative `.mat` files.
 
-**Validated real degradation (from the official `.mat` files):**
+**Validated real degradation (from the canonical official `.mat` cells):**
 
 | Battery | Discharge cycles | Capacity loss | First < 80% SOH | Corr(cycle, capacity) |
 | --- | --- | --- | --- | --- |
@@ -187,8 +192,16 @@ sample, while local runs that have the archive use the authoritative `.mat` file
 | B0007 | 168 | 24.3% | 123 | −0.99 |
 | B0018 | 132 | 27.7% | 74 | −0.97 |
 
-The archive exposes **34 batteries** (B0005–B0056); the default set is four for
-speed, overridable with `--battery-id` (e.g. `python -m src.ingest.import_public_battery_data --battery-id B0049`).
+The local official archive exposes **34 batteries** (B0005–B0056). The default
+set is four for speed and clean CI evidence, overridable with `--battery-id`
+(for example, `python -m src.ingest.import_public_battery_data --battery-id B0049`)
+or `--all-available` for full local archive coverage. In the latest local
+full-archive run, the adapter parsed **34 batteries / 2,750 discharge rows** and
+labeled **13 batteries** as clear capacity-fade validation cases. Other parsed
+cells are retained with caution notes when they have short sequences, increasing
+capacity versus the first discharge, or weak/positive cycle-capacity correlation.
+See [`reports/real_data_coverage_and_limitations.md`](reports/real_data_coverage_and_limitations.md)
+for the honest production-readiness boundary.
 
 ---
 

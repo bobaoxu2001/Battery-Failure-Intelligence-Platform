@@ -15,6 +15,7 @@ Run as a module::
 
     python -m src.ingest.import_public_battery_data                 # auto source
     python -m src.ingest.import_public_battery_data --source archive
+    python -m src.ingest.import_public_battery_data --source archive --all-available
     python -m src.ingest.import_public_battery_data --download       # mirror CSVs
     python -m src.ingest.import_public_battery_data --battery-id B0005 --battery-id B0018
 
@@ -144,13 +145,20 @@ def _normalise_processed_csv(path: Path) -> pd.DataFrame:
     return raw[cols].dropna(subset=["cycle_index", "capacity_ah"]).reset_index(drop=True)
 
 
-def _summary_from_official_archive(battery_ids: list[str] | None) -> pd.DataFrame | None:
+def _summary_from_official_archive(
+    battery_ids: list[str] | None,
+    all_available: bool = False,
+) -> pd.DataFrame | None:
     """Parse the official NASA ``.mat`` archive if it is present on disk."""
-    from src.ingest.nasa_mat_parser import build_zip_index, parse_batteries
+    from src.ingest.nasa_mat_parser import build_zip_index, parse_batteries_detailed
 
     if not build_zip_index():
         return None
-    summary = parse_batteries(battery_ids)
+    summary, skipped = parse_batteries_detailed(battery_ids, all_available=all_available)
+    summary.attrs["skipped_batteries"] = [
+        {"battery_id": item.battery_id, "reason": item.reason} for item in skipped
+    ]
+    summary.attrs["all_available_requested"] = all_available
     log.info("Used official NASA .mat archive (%d rows, %d batteries)",
              len(summary), summary["battery_id"].nunique())
     return summary
@@ -182,17 +190,19 @@ def build_real_cycle_summary(
     download: bool = False,
     battery_ids: list[str] | None = None,
     source: str = "auto",
+    all_available: bool = False,
 ) -> pd.DataFrame:
     """Build a normalized real-data cycle summary from the best available source.
 
     ``source`` is one of ``auto`` (archive -> mirror -> bundled sample),
-    ``archive``, ``mirror`` or ``sample``.
+    ``archive``, ``mirror`` or ``sample``. ``all_available`` scans every
+    battery discoverable in the official archive when that source is used.
     """
     config.ensure_dirs()
     summary: pd.DataFrame | None = None
 
     if source in ("auto", "archive"):
-        summary = _summary_from_official_archive(battery_ids)
+        summary = _summary_from_official_archive(battery_ids, all_available=all_available)
         if summary is None and source == "archive":
             raise FileNotFoundError(
                 f"Official NASA archive not found under {config.NASA_OFFICIAL_ARCHIVE_DIR}."
@@ -240,10 +250,34 @@ def _battery_rollup(summary: pd.DataFrame) -> pd.DataFrame:
                     int(below_80["cycle_index"].iloc[0]) if not below_80.empty else None
                 ),
                 "capacity_cycle_corr": corr,
+                "mean_discharge_temp_c": float(group["max_discharge_temp_c"].mean()),
                 "max_discharge_temp_c": float(group["max_discharge_temp_c"].max()),
+                "max_charge_temp_c": float(group["max_charge_temp_c"].max()),
             }
         )
-    return pd.DataFrame(rows).sort_values("battery_id").reset_index(drop=True)
+    rollup = pd.DataFrame(rows).sort_values("battery_id").reset_index(drop=True)
+    rollup["validation_note"] = rollup.apply(_validation_note, axis=1)
+    return rollup
+
+
+def _validation_note(row: pd.Series) -> str:
+    """Label whether a battery is a straightforward capacity-fade example."""
+    if int(row["cycles"]) < 10:
+        return "Very short discharge sequence; useful for parser coverage only."
+    if row["capacity_loss_pct"] < -0.05:
+        return "Capacity increases versus first discharge; review protocol/first-cycle normalization before fade modeling."
+    if row["capacity_cycle_corr"] > 0.25:
+        return "Positive capacity trend; not a simple capacity-fade validation case."
+    if row["capacity_loss_pct"] < 0:
+        return "Slight capacity gain versus first discharge; use cautiously."
+    if row["capacity_loss_pct"] >= 0.05 and row["capacity_cycle_corr"] < -0.5:
+        return "Clear capacity-fade validation case."
+    return "Parsed real cycle data; limited fade signal in this window."
+
+
+def _skipped_batteries(summary: pd.DataFrame) -> list[dict[str, str]]:
+    skipped = summary.attrs.get("skipped_batteries", [])
+    return skipped if isinstance(skipped, list) else []
 
 
 def build_report(summary: pd.DataFrame | None = None) -> str:
@@ -253,6 +287,7 @@ def build_report(summary: pd.DataFrame | None = None) -> str:
     if summary is None:
         summary = pd.read_csv(config.NASA_REAL_CYCLE_SUMMARY_CSV)
     rollup = _battery_rollup(summary)
+    skipped = _skipped_batteries(summary)
     adapters = sorted(summary["source_adapter"].dropna().unique()) if "source_adapter" in summary else []
     adapter_label = {
         "official_mat_archive": "official NASA .mat archive (authoritative)",
@@ -272,21 +307,54 @@ def build_report(summary: pd.DataFrame | None = None) -> str:
         f"- Adapter used: {adapter_text}",
         f"- Processed-CSV mirror (fallback): {source.processed_mirror}",
         f"- Parsed batteries: {', '.join(rollup['battery_id'].tolist())}",
+        f"- Number of parsed batteries: {len(rollup)}",
         f"- Parsed cycle rows: {len(summary)}",
+        f"- Skipped batteries: {len(skipped)}",
+        f"- Clear capacity-fade validation batteries: {(rollup['validation_note'] == 'Clear capacity-fade validation case.').sum()}",
         "",
         "## Battery-Level Degradation Summary",
         "",
-        "| Battery | Cycles | Initial Ah | Final Ah | Capacity loss | First <80% SOH | Max discharge temp C | Corr(cycle, capacity) |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Battery | Discharge cycles | Initial Ah | Final Ah | Capacity loss | First <80% SOH | Mean max discharge temp C | Max discharge temp C | Max charge temp C | Corr(cycle, capacity) | Validation note |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for _, row in rollup.iterrows():
         first_below = "" if pd.isna(row["first_cycle_below_80pct_soh"]) else int(row["first_cycle_below_80pct_soh"])
         lines.append(
             f"| {row['battery_id']} | {int(row['cycles'])} | {row['initial_capacity_ah']:.3f} | "
             f"{row['final_capacity_ah']:.3f} | {row['capacity_loss_pct']:.1%} | {first_below} | "
-            f"{row['max_discharge_temp_c']:.1f} | {row['capacity_cycle_corr']:.3f} |"
+            f"{row['mean_discharge_temp_c']:.1f} | {row['max_discharge_temp_c']:.1f} | "
+            f"{row['max_charge_temp_c']:.1f} | {row['capacity_cycle_corr']:.3f} | {row['validation_note']} |"
         )
+    temp = summary[["max_discharge_temp_c", "max_charge_temp_c"]].describe().loc[["mean", "min", "max"]]
     lines += [
+        "",
+        "## Temperature Summary",
+        "",
+        "| Metric | Max discharge temp C | Max charge temp C |",
+        "| --- | --- | --- |",
+        f"| Mean | {temp.loc['mean', 'max_discharge_temp_c']:.1f} | {temp.loc['mean', 'max_charge_temp_c']:.1f} |",
+        f"| Min | {temp.loc['min', 'max_discharge_temp_c']:.1f} | {temp.loc['min', 'max_charge_temp_c']:.1f} |",
+        f"| Max | {temp.loc['max', 'max_discharge_temp_c']:.1f} | {temp.loc['max', 'max_charge_temp_c']:.1f} |",
+        "",
+        "## Skipped Batteries",
+        "",
+    ]
+    if skipped:
+        lines += [
+            "| Battery | Reason |",
+            "| --- | --- |",
+        ]
+        for item in skipped:
+            lines.append(f"| {item.get('battery_id', '')} | {item.get('reason', '')} |")
+    else:
+        lines.append("No requested batteries were skipped.")
+    lines += [
+        "",
+        "## Data-Quality Interpretation",
+        "",
+        "The full archive mode is intentionally broad: it proves the adapter can scan all locally available NASA `.mat` batteries, not that every cell is a clean monotonic fade benchmark.",
+        "Cells with increasing capacity, weak/positive cycle-capacity correlation, or very short discharge sequences are retained in the report and labeled for review rather than dropped silently.",
+        "For interview discussion, the strongest simple capacity-fade evidence remains the clear fade cases, especially the canonical B0005/B0006/B0007/B0018 cells.",
         "",
         "## How this is used",
         "The main warehouse/model pipeline remains synthetic and fully reproducible.",
@@ -302,11 +370,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Import public NASA battery aging data")
     parser.add_argument("--download", action="store_true", help="download processed NASA CSVs before parsing")
     parser.add_argument("--battery-id", action="append", dest="battery_ids", help="battery id to parse, e.g. B0005")
+    parser.add_argument("--all-available", action="store_true",
+                        help="with --source archive, parse every battery discoverable in the official archive")
     parser.add_argument("--source", choices=["auto", "archive", "mirror", "sample"], default="auto",
                         help="real-data source: auto (default), official archive, processed-CSV mirror, or bundled sample")
     args = parser.parse_args()
     summary = build_real_cycle_summary(
-        download=args.download, battery_ids=args.battery_ids, source=args.source
+        download=args.download,
+        battery_ids=args.battery_ids,
+        source=args.source,
+        all_available=args.all_available,
     )
     build_report(summary)
 
