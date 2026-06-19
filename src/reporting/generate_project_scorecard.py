@@ -112,6 +112,15 @@ ITEMS = [
         "Ranked high-risk cell queue with likely root cause and follow-up action.",
     ),
     ScorecardItem(
+        "Hiring-manager review packet",
+        (
+            config.HIRING_MANAGER_PACKET,
+            config.CELL_INVESTIGATION_CASE_STUDY,
+            config.REAL_DATA_COVERAGE_REPORT,
+        ),
+        "Fast review path plus one concrete cell investigation and a candid data-boundary report.",
+    ),
+    ScorecardItem(
         "AI-powered reusable workflows",
         (
             config.ROOT / "ai_workflows/anomaly_investigation_skill.md",

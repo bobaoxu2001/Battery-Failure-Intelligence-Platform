@@ -1,0 +1,4 @@
+cell_test_id,cell_id,lot_id,batch_id,station_id,fixture_id,equipment_id,test_protocol,test_temperature_c,charge_current_a,discharge_current_a,initial_capacity_ah,initial_resistance_mohm,pass_fail_flag,manufacturing_ts,test_start_ts,test_end_ts
+FCT-0001,MOCK-CELL-001,MOCK-LOT-A,MOCK-BATCH-01,MOCK-ST-01,MOCK-FIX-01,MOCK-EQ-01,acceptance_v1,25.0,1.5,1.5,3.48,24.8,true,2026-01-02T08:00:00Z,2026-01-03T09:00:00Z,2026-01-03T09:45:00Z
+FCT-0002,MOCK-CELL-002,MOCK-LOT-A,MOCK-BATCH-01,MOCK-ST-02,MOCK-FIX-02,MOCK-EQ-02,acceptance_v1,25.0,1.5,1.5,3.45,25.4,true,2026-01-02T08:05:00Z,2026-01-03T10:00:00Z,2026-01-03T10:44:00Z
+FCT-0003,MOCK-CELL-003,MOCK-LOT-B,MOCK-BATCH-02,MOCK-ST-01,MOCK-FIX-03,MOCK-EQ-01,acceptance_v1,35.0,1.5,1.5,3.41,27.2,false,2026-01-04T08:00:00Z,2026-01-05T09:00:00Z,2026-01-05T09:47:00Z

@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import io
 import zipfile
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -57,6 +58,12 @@ NORMALIZED_COLUMNS = [
     "discharge_temp_slope",
     "voltage_slope",
 ]
+
+
+@dataclass(frozen=True)
+class SkippedBattery:
+    battery_id: str
+    reason: str
 
 
 def _as_str(value) -> str:
@@ -203,46 +210,73 @@ def _remaining_cycles(soh: np.ndarray) -> np.ndarray:
 def parse_batteries(
     battery_ids: list[str] | None = None,
     archive_dir: Path | None = None,
+    all_available: bool = False,
 ) -> pd.DataFrame:
     """Parse the requested batteries from the official archive into one table."""
+    summary, skipped = parse_batteries_detailed(battery_ids, archive_dir, all_available)
+    if skipped:
+        log.warning("Skipped %d requested batteries: %s", len(skipped), skipped)
+    return summary
+
+
+def parse_batteries_detailed(
+    battery_ids: list[str] | None = None,
+    archive_dir: Path | None = None,
+    all_available: bool = False,
+) -> tuple[pd.DataFrame, list[SkippedBattery]]:
+    """Parse batteries from the official archive and return skipped-cell reasons."""
     index = build_zip_index(archive_dir)
     if not index:
         raise FileNotFoundError(
             "Official NASA archive not found. Expected battery zips under "
             f"{config.NASA_OFFICIAL_ARCHIVE_DIR}."
         )
-    battery_ids = battery_ids or [b for b in config.NASA_DEFAULT_BATTERY_IDS if b in index]
-    if not battery_ids:
-        battery_ids = available_batteries(archive_dir)
+    if all_available:
+        requested = available_batteries(archive_dir)
+    elif battery_ids:
+        requested = battery_ids
+    else:
+        requested = [b for b in config.NASA_DEFAULT_BATTERY_IDS if b in index]
+        if not requested:
+            requested = sorted(index)
 
     frames = []
-    for battery_id in battery_ids:
+    skipped: list[SkippedBattery] = []
+    for battery_id in requested:
         if battery_id not in index:
-            log.warning("Battery %s not present in the archive; skipping", battery_id)
+            skipped.append(SkippedBattery(battery_id, "not present in archive index"))
             continue
         zip_path, member = index[battery_id]
-        with zipfile.ZipFile(zip_path) as zf:
-            raw = zf.read(member)
-        df = _parse_mat_bytes(raw, battery_id)
+        try:
+            with zipfile.ZipFile(zip_path) as zf:
+                raw = zf.read(member)
+            df = _parse_mat_bytes(raw, battery_id)
+        except Exception as exc:  # noqa: BLE001 - keep other batteries parseable.
+            skipped.append(SkippedBattery(battery_id, f"parse failed: {exc}"))
+            log.warning("Skipping %s from %s: %s", battery_id, zip_path.name, exc)
+            continue
         log.info("Parsed %s: %d discharge cycles, SOH %.3f -> %.3f (from %s)",
                  battery_id, len(df), df["soh"].iloc[0], df["soh"].iloc[-1], zip_path.name)
         frames.append(df)
 
     if not frames:
-        raise FileNotFoundError("No requested batteries were found in the official archive")
-    return pd.concat(frames, ignore_index=True)
+        detail = "; ".join(f"{item.battery_id}: {item.reason}" for item in skipped)
+        raise FileNotFoundError(f"No requested batteries were parsed from the official archive. {detail}")
+    return pd.concat(frames, ignore_index=True), skipped
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Parse the official NASA .mat battery archive")
     parser.add_argument("--battery-id", action="append", dest="battery_ids",
                         help="battery id to parse, e.g. B0005 (repeatable)")
+    parser.add_argument("--all-available", action="store_true",
+                        help="parse every battery discoverable in the official archive")
     parser.add_argument("--list", action="store_true", help="list batteries discoverable in the archive")
     args = parser.parse_args()
     if args.list:
         print("\n".join(available_batteries()) or "(no archive found)")
         return
-    summary = parse_batteries(args.battery_ids)
+    summary = parse_batteries(args.battery_ids, all_available=args.all_available)
     summary.to_csv(config.NASA_REAL_CYCLE_SUMMARY_CSV, index=False)
     log.info("Wrote %s (%d rows, %d batteries)",
              config.NASA_REAL_CYCLE_SUMMARY_CSV, len(summary), summary["battery_id"].nunique())

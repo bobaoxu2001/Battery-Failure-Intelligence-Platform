@@ -1,0 +1,4 @@
+failure_event_id,cell_id,event_ts,event_type,failure_mode,capacity_drop_event,impedance_spike_event,thermal_anomaly_event,early_degradation_flag,escalation_required,failure_severity,label_source
+FE-0001,MOCK-CELL-001,2026-01-12T10:00:00Z,none,none,false,false,false,false,false,none,mock_fixture
+FE-0002,MOCK-CELL-002,2026-01-12T10:05:00Z,none,none,false,false,false,false,false,none,mock_fixture
+FE-0003,MOCK-CELL-003,2026-01-13T11:00:00Z,thermal_anomaly,thermal_stress,true,true,true,true,true,high,mock_fixture

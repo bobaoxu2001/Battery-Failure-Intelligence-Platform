@@ -1,0 +1,4 @@
+usage_window_id,cell_id,device_id_hash,window_start_ts,window_end_ts,avg_depth_of_discharge,fast_charge_ratio,avg_daily_cycles,high_temp_exposure_hours,low_temp_exposure_hours,usage_profile
+USG-0001,MOCK-CELL-001,hash_mock_001,2026-01-04T00:00:00Z,2026-01-11T00:00:00Z,0.62,0.18,1.1,6.5,0.2,mixed
+USG-0002,MOCK-CELL-002,hash_mock_002,2026-01-04T00:00:00Z,2026-01-11T00:00:00Z,0.54,0.08,0.8,2.1,0.4,light
+USG-0003,MOCK-CELL-003,hash_mock_003,2026-01-06T00:00:00Z,2026-01-13T00:00:00Z,0.81,0.42,1.7,18.4,0.0,stress

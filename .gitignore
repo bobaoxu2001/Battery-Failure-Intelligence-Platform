@@ -9,6 +9,9 @@ dist/
 venv/
 env/
 .python-version
+.env
+.env.*
+!.env.example
 
 # ---- Testing / tooling ----
 .pytest_cache/
@@ -30,6 +33,9 @@ Thumbs.db
 data/raw/
 data/synthetic/
 data/processed/
+data/production/
+data/private/
+data/prod_exports/
 reports/sql_exports/
 
 # Keep the directory structure (placeholder .gitkeep files are tracked).

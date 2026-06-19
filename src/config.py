@@ -61,7 +61,10 @@ JMP_SCRIPT = REPORTS_DIR / "jmp_battery_analysis.jsl"
 MODEL_MONITORING_METRICS_CSV = REPORTS_DIR / "model_monitoring_metrics.csv"
 MODEL_MONITORING_REPORT = REPORTS_DIR / "model_monitoring_summary.md"
 PROJECT_READINESS_SCORECARD = REPORTS_DIR / "project_readiness_scorecard.md"
+HIRING_MANAGER_PACKET = REPORTS_DIR / "hiring_manager_packet.md"
+CELL_INVESTIGATION_CASE_STUDY = REPORTS_DIR / "cell_investigation_case_study.md"
 REAL_DATA_VALIDATION_REPORT = REPORTS_DIR / "real_data_validation_summary.md"
+REAL_DATA_COVERAGE_REPORT = REPORTS_DIR / "real_data_coverage_and_limitations.md"
 
 # --------------------------------------------------------------------------- #
 # Reproducibility / scale

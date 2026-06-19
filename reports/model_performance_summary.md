@@ -1,6 +1,6 @@
 # Model Performance Summary
 
-_Generated: 2026-06-17 • all data synthetic; no confidential data used._
+_Generated: 2026-06-19 • all data synthetic; no confidential data used._
 
 ## 1. State of Health (SOH) regression
 - **Algorithm:** GradientBoosting

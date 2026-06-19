@@ -1,6 +1,6 @@
 # Project Readiness Scorecard
 
-_Generated: 2026-06-17 - evidence-based portfolio review._
+_Generated: 2026-06-19 - evidence-based portfolio review._
 
 | Competency | Status | Evidence | Note |
 | --- | --- | --- | --- |
@@ -14,10 +14,11 @@ _Generated: 2026-06-17 - evidence-based portfolio review._
 | Tableau and JMP handoffs | PASS | dashboards/tableau_extracts/executive_battery_health.csv<br>dashboards/tableau_dashboard_blueprint.md<br>reports/jmp_cell_analysis.csv<br>reports/jmp_battery_analysis.jsl | BI-ready CSV extracts, dashboard blueprint, and JMP CSV/JSL starter analysis. |
 | Statistics and value-added analysis | PASS | reports/model_performance_summary.md<br>reports/model_monitoring_summary.md<br>reports/model_monitoring_metrics.csv | Grouped validation, explainability, cohort PSI, risk mix, and recommended actions. |
 | Urgent escalation reporting | PASS | reports/escalation_report_sample.csv<br>reports/high_risk_cells_summary.md | Ranked high-risk cell queue with likely root cause and follow-up action. |
+| Hiring-manager review packet | PASS | reports/hiring_manager_packet.md<br>reports/cell_investigation_case_study.md<br>reports/real_data_coverage_and_limitations.md | Fast review path plus one concrete cell investigation and a candid data-boundary report. |
 | AI-powered reusable workflows | PASS | ai_workflows/anomaly_investigation_skill.md<br>ai_workflows/sql_report_generation_skill.md<br>ai_workflows/model_debugging_workflow.md<br>ai_workflows/escalation_report_assistant.md | Reusable LLM workflows for triage, SQL generation, debugging and report writing. |
 | Traceability and verification | PASS | pyproject.toml<br>.github/workflows/ci.yml<br>tests/test_model_outputs.py<br>LICENSE | Project metadata, CI, tests and license are present. |
 
-## Overall Score: 12/12
+## Overall Score: 13/13
 
 Verdict: **portfolio-ready** for a 0-2 year Battery Engineering Data Scientist contractor portfolio.
 

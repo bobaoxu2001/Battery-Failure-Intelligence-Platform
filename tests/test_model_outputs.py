@@ -146,9 +146,26 @@ def test_monitoring_metrics_have_psi_status(monitoring_metrics):
 
 def test_project_readiness_scorecard_is_complete():
     text = config.PROJECT_READINESS_SCORECARD.read_text(encoding="utf-8")
-    assert "Overall Score: 12/12" in text
+    assert "Overall Score: 13/13" in text
     assert "Verdict: **portfolio-ready**" in text
     assert "MISSING" not in text
+
+
+def test_hiring_manager_packet_has_fast_review_evidence():
+    text = config.HIRING_MANAGER_PACKET.read_text(encoding="utf-8")
+    assert "First 60 Seconds" in text
+    assert "reports/cell_investigation_case_study.md" in text
+    assert "reports/real_data_validation_summary.md" in text
+    assert "| Proof point | Artifact | Why it matters | Status |" in text
+    assert "missing" not in text.lower()
+
+
+def test_cell_investigation_case_study_has_decision_context():
+    text = config.CELL_INVESTIGATION_CASE_STUDY.read_text(encoding="utf-8")
+    assert "Selected Cell" in text
+    assert "Peer Context" in text
+    assert "Decision" in text
+    assert "synthetic production-style investigation" in text
 
 
 def test_population_stability_index_status_thresholds():

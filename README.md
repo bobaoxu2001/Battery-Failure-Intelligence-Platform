@@ -19,9 +19,10 @@ escalation reports** and **Tableau-ready dashboard outputs**.
 **What this demonstrates (in 5 bullets):**
 - **End-to-end ownership** — raw telemetry → star-schema SQL warehouse → features → ML → automated reports/dashboards, orchestrated by one script and gated by CI + tests.
 - **Battery-reliability ML** — SOH, RUL, and failure-risk models with leakage-aware, cell-grouped validation and SHAP/permutation explainability.
-- **Real public data** — parses NASA PCoE's original MATLAB `.mat` battery-aging archive directly (not just a mirror) and recovers physically sensible degradation.
+- **Honest data boundary** — default pipeline uses reproducible synthetic factory/usage/failure data; real public validation uses NASA PCoE battery-aging data.
+- **Large archive support** — parses NASA PCoE's original MATLAB `.mat` battery-aging archive directly when present locally; a small committed NASA sample keeps CI and fresh clones runnable.
 - **Decision-ready reporting** — a ranked escalation queue with likely root cause + recommended follow-up per cell, plus Tableau-ready extracts and JMP handoff files.
-- **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, and pytest + GitHub Actions.
+- **Production habits** — data-quality checks, drift/PSI monitoring, chunked large-table loads, Unix/Bash/Perl tooling, pytest + GitHub Actions, and explicit notes that production validation would require real factory, usage, and failure labels.
 
 **Why it fits the Apple Battery DS Contractor role:** the JD centers on Python ML,
 SQL/data-warehousing, factory/usage/failure analysis, urgent escalation reporting,
@@ -46,8 +47,13 @@ Prefer to skim the results first? These are real artifacts the pipeline generate
 committed so you can read them on GitHub without running anything:
 
 - 🚨 [**Daily escalation summary**](reports/high_risk_cells_summary.md) — ranked high-risk cells with likely root cause + recommended follow-up.
+- 🧑‍💼 [**Hiring manager review packet**](reports/hiring_manager_packet.md) — the fastest proof path: what to inspect first, evidence map, interview hooks, and honest boundaries.
+- 🔎 [**Single-cell investigation case study**](reports/cell_investigation_case_study.md) — one escalated cell with peer context, root-cause signal, and engineering follow-up.
 - 📈 [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / failure-risk metrics, confusion matrix, and top drivers.
 - 🔋 [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
+- 🧭 [**Real-data limitations**](reports/real_data_coverage_and_limitations.md) — what is real, what remains synthetic, and what production validation would require.
+- 🔐 [**Authorized production data contract**](docs/production_data_access/production_data_contract.md) — production-style schemas, access runbook, and validation plan without private data.
+- 🌐 [**Public dataset expansion plan**](docs/public_battery_dataset_expansion_plan.md) — CALCE, Oxford, and Severson/MIT-Stanford datasets assessed for future adapters.
 - 📊 [**Tableau dashboard blueprint**](dashboards/tableau_dashboard_blueprint.md) — the 4 dashboard pages (fields + charts per page).
 - ✅ [**Project readiness scorecard**](reports/project_readiness_scorecard.md) — evidence-based mapping of each role competency to a concrete artifact.
 
@@ -155,7 +161,8 @@ DDL: [`sql/create_schema.sql`](sql/create_schema.sql) · marts:
 The default ML/warehouse training path remains **synthetic** so it is fast and
 fully reproducible. As an independent **external validation** layer, the project
 also ingests **real public NASA PCoE battery aging data** and writes
-`reports/real_data_validation_summary.md` from
+`reports/real_data_validation_summary.md` and
+`reports/real_data_coverage_and_limitations.md` from
 `data/processed/nasa_real_cycle_summary.csv`.
 
 `src/ingest/import_public_battery_data.py` selects the best available source, in
@@ -167,6 +174,10 @@ order of authority:
    Place the archive at `data/raw/5. Battery Data Set/` (the nested
    `BatteryAgingARC_*.zip` files NASA ships) and it is used automatically:
    `SOURCE=archive bash scripts/run_real_data_validation.sh`
+   To scan every battery discoverable in the local archive:
+   `SOURCE=archive BATTERIES=all bash scripts/run_real_data_validation.sh`
+   To parse a specific set:
+   `SOURCE=archive BATTERY_IDS="B0005 B0006 B0049" bash scripts/run_real_data_validation.sh`
 2. **Processed-CSV mirror** — a lightweight third-party convenience mirror for
    quick demos when the official archive is not on disk:
    `DOWNLOAD=1 bash scripts/run_real_data_validation.sh`
@@ -178,7 +189,7 @@ Upstream source (≈200MB): `https://phm-datasets.s3.amazonaws.com/NASA/5.+Batte
 The official archive is gitignored (too large to commit); CI runs on the bundled
 sample, while local runs that have the archive use the authoritative `.mat` files.
 
-**Validated real degradation (from the official `.mat` files):**
+**Validated real degradation (from the canonical official `.mat` cells):**
 
 | Battery | Discharge cycles | Capacity loss | First < 80% SOH | Corr(cycle, capacity) |
 | --- | --- | --- | --- | --- |
@@ -187,8 +198,51 @@ sample, while local runs that have the archive use the authoritative `.mat` file
 | B0007 | 168 | 24.3% | 123 | −0.99 |
 | B0018 | 132 | 27.7% | 74 | −0.97 |
 
-The archive exposes **34 batteries** (B0005–B0056); the default set is four for
-speed, overridable with `--battery-id` (e.g. `python -m src.ingest.import_public_battery_data --battery-id B0049`).
+The local official archive exposes **34 batteries** (B0005–B0056). The default
+set is four for speed and clean CI evidence, overridable with `--battery-id`
+(for example, `python -m src.ingest.import_public_battery_data --battery-id B0049`)
+or `--all-available` for full local archive coverage. In the latest local
+full-archive run, the adapter parsed **34 batteries / 2,750 discharge rows** and
+labeled **13 batteries** as clear capacity-fade validation cases. Other parsed
+cells are retained with caution notes when they have short sequences, increasing
+capacity versus the first discharge, or weak/positive cycle-capacity correlation.
+See [`reports/real_data_coverage_and_limitations.md`](reports/real_data_coverage_and_limitations.md)
+for the honest production-readiness boundary.
+
+---
+
+### Production Data Access: Authorized-Only Design
+
+This repo does **not** contain proprietary production data, Apple internal data,
+private credentials, restricted system exports, or raw factory records. The
+production-data layer is a scaffold for an authorized environment only.
+
+What is implemented:
+
+- [`docs/production_data_access/gap_analysis.md`](docs/production_data_access/gap_analysis.md) — what the current repo proves and what it cannot prove without authorized production data.
+- [`docs/production_data_access/production_data_contract.md`](docs/production_data_access/production_data_contract.md) — expected tables/streams such as factory tests, cycle measurements, usage telemetry, failure events, quality holds, dispositions, calibration logs, predictions, and escalation actions.
+- [`docs/production_data_access/authorized_access_runbook.md`](docs/production_data_access/authorized_access_runbook.md) — least-privilege, read-only, approved access workflow.
+- [`docs/production_data_access/production_validation_plan.md`](docs/production_data_access/production_validation_plan.md) — time-based, cell-grouped, lot/station holdout, leakage, label-quality, threshold, drift, and feedback-loop validation plan.
+- [`src/ingest/production_connector.py`](src/ingest/production_connector.py) — a safe connector scaffold that can validate config or print the schema contract, but does not connect to private systems by default.
+- [`data/mock_production/`](data/mock_production/) — tiny synthetic mock fixtures for connector tests only; not production data and not derived from confidential systems.
+
+Useful commands:
+
+```bash
+python -m src.ingest.production_connector --schema-contract-only
+BFI_PROD_DB_URI="mock+readonly://placeholder" \
+BFI_PROD_DB_SCHEMA="battery_quality" \
+BFI_PROD_READ_ONLY=true \
+BFI_PROD_SAMPLE_LIMIT=10000 \
+python -m src.ingest.production_connector --dry-run
+```
+
+In a real battery engineering team, this same pipeline shape would connect to
+approved internal warehouse/API sources only after access approval, data-owner
+review, least-privilege credential provisioning, schema validation, lineage
+documentation, and retention-rule agreement. Production model validation would
+require real factory, usage, failure-label, quality-hold, retest, and disposition
+data calibrated with battery engineers.
 
 ---
 
@@ -236,7 +290,8 @@ pipeline run. Numbers vary slightly with data scale / quick mode.*
 6. Score cells + write predictions to warehouse → 7. SQL quality checks →
 8. Escalation report → 9. Tableau extracts → 10. JMP files →
 11. Model monitoring → 12. Model performance summary → 13. Real-data validation →
-14. Readiness scorecard → 15. File validation.
+14. Hiring-manager packet + cell investigation → 15. Readiness scorecard →
+16. File validation.
 
 Outputs are written to `data/processed/`, `reports/`, and `dashboards/`.
 
@@ -294,6 +349,8 @@ bash scripts/sql_export.sh                     # export ad-hoc SQL results to CS
 perl scripts/parse_raw_logs.pl                 # parse raw telemetry logs only
 BFI_DATA_SOURCES="cycler-db.local:5432" bash scripts/check_data_source_connectivity.sh
 SOURCE=archive bash scripts/run_real_data_validation.sh # parse official NASA .mat archive
+BATTERIES=all SOURCE=archive bash scripts/run_real_data_validation.sh
+BATTERY_IDS="B0005 B0006 B0049" SOURCE=archive bash scripts/run_real_data_validation.sh
 DOWNLOAD=1 bash scripts/run_real_data_validation.sh     # or fetch processed-CSV mirror
 ```
 
@@ -329,6 +386,7 @@ A readable daily standup version is written to
 
 - ✅ Processed synthetic battery data (`data/processed/*.csv`)
 - ✅ Optional real public NASA battery validation report (`reports/real_data_validation_summary.md`)
+- ✅ Hiring-manager review packet and single-cell case study (`reports/hiring_manager_packet.md`, `reports/cell_investigation_case_study.md`)
 - ✅ Local SQL warehouse (`data/processed/battery_warehouse.db`)
 - ✅ Trained model artifacts (`data/processed/models/*.joblib`)
 - ✅ Escalation report CSV + high-risk markdown summary (`reports/`)
@@ -395,4 +453,4 @@ A readable daily standup version is written to
 
 ---
 
-*License: MIT. All data synthetic. Not affiliated with or endorsed by Apple.*
+*License: MIT. Default factory/usage/failure data is synthetic; NASA validation data is public; mock production fixtures are synthetic. Not affiliated with or endorsed by Apple.*

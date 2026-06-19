@@ -1,0 +1,4 @@
+calibration_event_id,station_id,equipment_id,fixture_id,calibration_status,calibration_type,measurement_drift_pct,calibration_ts,valid_from_ts,valid_to_ts
+CAL-0001,MOCK-ST-01,MOCK-EQ-01,MOCK-FIX-01,pass,scheduled,0.3,2026-01-01T00:00:00Z,2026-01-01T00:00:00Z,2026-02-01T00:00:00Z
+CAL-0002,MOCK-ST-02,MOCK-EQ-02,MOCK-FIX-02,pass,scheduled,0.4,2026-01-01T00:00:00Z,2026-01-01T00:00:00Z,2026-02-01T00:00:00Z
+CAL-0003,MOCK-ST-01,MOCK-EQ-01,MOCK-FIX-03,watch,post_hold,1.8,2026-01-10T00:00:00Z,2026-01-10T00:00:00Z,2026-01-20T00:00:00Z

@@ -1,6 +1,6 @@
 # High-Risk Battery Cells - Daily Escalation Summary
 
-_Generated: 2026-06-17 • synthetic data; no confidential data used._
+_Generated: 2026-06-19 • synthetic data; no confidential data used._
 
 **32 cells** require engineering attention today (**24 Critical**, **7 High**, **1 other rule-based escalation(s)**).
 
