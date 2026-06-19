@@ -123,7 +123,7 @@ def test_no_real_credentials_are_present_in_repo_files():
         re.compile(r"xox[baprs]-[A-Za-z0-9-]{20,}"),
         re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |)PRIVATE KEY-----"),
         re.compile(r"(?i)(password|secret|token)\s*=\s*[^\\s#]+"),
-        re.compile(r"BFI_PROD_DB_URI=(?!$)(?!\"?mock\+readonly://placeholder)\S+"),
+        re.compile("BFI_PROD_DB_URI" + r"=(?!$)(?!\"?mock\+readonly://placeholder)\S+"),
     ]
     for rel_path in tracked:
         path = ROOT / rel_path
