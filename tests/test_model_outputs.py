@@ -3,12 +3,14 @@ from __future__ import annotations
 
 import re
 
+import numpy as np
 import pandas as pd
 import pytest
 
 from src import config
 from src.models.monitor_drift import population_stability_index, psi_status
 from src.models import _common as C
+from src.models.model_release_backtest import _failure_baseline
 from src.models.score_cells import risk_tier
 from src.models.train_survival_rul_model import SurvivalBundle
 from src.reporting.generate_jmp_exports import JMP_COLUMNS
@@ -171,6 +173,23 @@ def test_model_release_backtest_compares_models_to_baselines(release_metrics):
     assert "current_fade_to_eol_baseline" in approaches
     assert "soh_station_rule_baseline" in approaches
     assert release_metrics["value"].notna().all()
+
+
+def test_failure_release_baseline_returns_writable_scored_probabilities():
+    train = pd.DataFrame({"escalation_required": [0, 1, 0, 1]})
+    test = pd.DataFrame(
+        {
+            "final_soh": [0.95, 0.80, 0.70],
+            "station_anomaly_rate": [0.0, 0.2, 0.4],
+        }
+    )
+
+    proba = _failure_baseline(train, test)
+
+    assert proba.shape == (3,)
+    assert proba.flags.writeable
+    assert np.isfinite(proba).all()
+    assert ((0 <= proba) & (proba <= 1)).all()
 
 
 def test_model_release_report_has_threshold_and_calibration_context(release_calibration):

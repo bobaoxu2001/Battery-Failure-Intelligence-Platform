@@ -93,8 +93,9 @@ def _rul_baseline(test: pd.DataFrame) -> np.ndarray:
 
 
 def _failure_baseline(train: pd.DataFrame, test: pd.DataFrame) -> np.ndarray:
-    risk_score = (1.0 - test["final_soh"]).clip(lower=0).to_numpy()
-    risk_score += 0.5 * test["station_anomaly_rate"].clip(lower=0).to_numpy()
+    risk_score = (1.0 - test["final_soh"]).clip(lower=0).to_numpy(dtype=float, copy=True)
+    station_component = test["station_anomaly_rate"].clip(lower=0).to_numpy(dtype=float, copy=False)
+    risk_score += 0.5 * station_component
     lo, hi = np.nanpercentile(risk_score, [5, 95])
     if hi <= lo:
         return np.repeat(float(train["escalation_required"].mean()), len(test))
