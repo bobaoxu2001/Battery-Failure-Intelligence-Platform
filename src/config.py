@@ -30,6 +30,8 @@ NASA_OFFICIAL_ARCHIVE_DIR = RAW_DIR / "5. Battery Data Set"
 
 SQL_DIR = ROOT / "sql"
 REPORTS_DIR = ROOT / "reports"
+DOCS_DIR = ROOT / "docs"
+INTERVIEW_DOCS_DIR = DOCS_DIR / "interview"
 DASHBOARDS_DIR = ROOT / "dashboards"
 TABLEAU_EXTRACTS_DIR = DASHBOARDS_DIR / "tableau_extracts"
 MOCKUPS_DIR = DASHBOARDS_DIR / "screenshots_or_mockups"
@@ -64,8 +66,11 @@ MODEL_MONITORING_REPORT = REPORTS_DIR / "model_monitoring_summary.md"
 PROJECT_READINESS_SCORECARD = REPORTS_DIR / "project_readiness_scorecard.md"
 HIRING_MANAGER_PACKET = REPORTS_DIR / "hiring_manager_packet.md"
 CELL_INVESTIGATION_CASE_STUDY = REPORTS_DIR / "cell_investigation_case_study.md"
+PANEL_INTERVIEW_GUIDE = INTERVIEW_DOCS_DIR / "PANEL_INTERVIEW_GUIDE.md"
+AD_HOC_200_BATTERY_FAILURE_REPORT = REPORTS_DIR / "ad_hoc_200_battery_failure_investigation.md"
 REAL_DATA_VALIDATION_REPORT = REPORTS_DIR / "real_data_validation_summary.md"
 REAL_DATA_COVERAGE_REPORT = REPORTS_DIR / "real_data_coverage_and_limitations.md"
+NASA_FULL_ARCHIVE_LOCAL_RUN_SUMMARY = REPORTS_DIR / "nasa_full_archive_local_run_summary.md"
 MODEL_RELEASE_BACKTEST_CSV = REPORTS_DIR / "model_release_backtest_metrics.csv"
 MODEL_RELEASE_BACKTEST_REPORT = REPORTS_DIR / "model_release_backtest.md"
 MODEL_RELEASE_CALIBRATION_CSV = REPORTS_DIR / "model_release_calibration.csv"
@@ -155,6 +160,7 @@ def ensure_dirs() -> None:
         PROCESSED_DIR,
         MODELS_DIR,
         REPORTS_DIR,
+        INTERVIEW_DOCS_DIR,
         TABLEAU_EXTRACTS_DIR,
         MOCKUPS_DIR,
     ):

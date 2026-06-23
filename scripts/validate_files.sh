@@ -62,6 +62,7 @@ check_file "data/processed/models/early_warning_failure_model.joblib" 1
 check_file "data/processed/models/survival_rul_model.joblib" 1
 
 echo "==> Validating reports + dashboard extracts"
+check_file "docs/interview/PANEL_INTERVIEW_GUIDE.md" 20
 check_file "reports/escalation_report_sample.csv"      1
 check_file "reports/high_risk_cells_summary.md"        3
 check_file "reports/model_performance_summary.md"      3
@@ -76,7 +77,9 @@ check_file "reports/model_monitoring_metrics.csv"      2
 check_file "reports/project_readiness_scorecard.md"    3
 check_file "reports/hiring_manager_packet.md"          3
 check_file "reports/cell_investigation_case_study.md"  3
+check_file "reports/ad_hoc_200_battery_failure_investigation.md" 20
 check_file "reports/real_data_validation_summary.md"   3
+check_file "reports/nasa_full_archive_local_run_summary.md" 10
 check_file "reports/real_data_coverage_and_limitations.md" 3
 check_file "reports/oxford_real_data_validation_summary.md" 3
 check_file "reports/jmp_cell_analysis.csv"             2

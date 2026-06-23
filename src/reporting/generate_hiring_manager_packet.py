@@ -25,6 +25,16 @@ log = get_logger(__name__)
 
 PROOF_ARTIFACTS = [
     (
+        "Panel interview guide",
+        "docs/interview/PANEL_INTERVIEW_GUIDE.md",
+        "Concise talk track for the Apple Battery DS panel, including what is real vs synthetic and how not to overclaim.",
+    ),
+    (
+        "200-cell ad-hoc failure investigation",
+        "reports/ad_hoc_200_battery_failure_investigation.md",
+        "Turns the first-round prompt into a battery engineering analytics plan: label definition, SQL summaries, bias controls, validation, and actions.",
+    ),
+    (
         "End-to-end runnable pipeline",
         "scripts/run_daily_pipeline.sh",
         "Generates data, features, warehouse, models, scores, reports, real-data validation, and file checks.",
@@ -38,6 +48,11 @@ PROOF_ARTIFACTS = [
         "Honest real-data boundary",
         "reports/real_data_coverage_and_limitations.md",
         "Separates real NASA validation from synthetic factory, usage, failure labels, and escalation thresholds.",
+    ),
+    (
+        "NASA full-archive local-run boundary",
+        "reports/nasa_full_archive_local_run_summary.md",
+        "Clarifies that 34 batteries / 2,750 rows / 13 clear fade cases came from an optional local archive run, not the default committed report.",
     ),
     (
         "Battery cell investigation",
@@ -242,10 +257,13 @@ def _packet_markdown() -> str:
         "",
         "Recommended skim path:",
         "",
-        "1. Read `reports/cell_investigation_case_study.md` for one concrete escalation investigation.",
-        "2. Read `reports/real_data_validation_summary.md` for real NASA battery-aging evidence.",
-        "3. Read `reports/real_data_coverage_and_limitations.md` for the honest production boundary.",
-        "4. Read `reports/project_readiness_scorecard.md` to map role expectations to files.",
+        "1. Read `docs/interview/PANEL_INTERVIEW_GUIDE.md` for the panel talk track.",
+        "2. Read `reports/ad_hoc_200_battery_failure_investigation.md` for the 200-cell pass/fail prompt.",
+        "3. Read `reports/cell_investigation_case_study.md` for one concrete escalation investigation.",
+        "4. Read `reports/real_data_validation_summary.md` for real NASA battery-aging evidence.",
+        "5. Read `reports/nasa_full_archive_local_run_summary.md` for the default-vs-full-archive NASA boundary.",
+        "6. Read `reports/real_data_coverage_and_limitations.md` for the honest production boundary.",
+        "7. Read `reports/project_readiness_scorecard.md` to map role expectations to files.",
         "",
         f"## Evidence Map ({passed}/{len(PROOF_ARTIFACTS)} Present)",
         "",
