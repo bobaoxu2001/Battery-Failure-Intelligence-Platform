@@ -56,8 +56,10 @@ ITEMS = [
             config.ROOT / "src/ingest/import_oxford_battery_data.py",
             config.REAL_DATA_VALIDATION_REPORT,
             config.OXFORD_REAL_DATA_REPORT,
+            config.NASA_FULL_ARCHIVE_LOCAL_RUN_SUMMARY,
+            config.REAL_DATA_COVERAGE_REPORT,
         ),
-        "NASA PCoE plus Oxford public battery-aging adapters validate degradation trends across two real sources.",
+        "NASA PCoE plus Oxford public adapters validate degradation trends while documenting the default sample vs optional local full-archive boundary.",
     ),
     ScorecardItem(
         "SQL warehouse and data modeling",
@@ -121,10 +123,12 @@ ITEMS = [
         "Hiring-manager review packet",
         (
             config.HIRING_MANAGER_PACKET,
+            config.PANEL_INTERVIEW_GUIDE,
+            config.AD_HOC_200_BATTERY_FAILURE_REPORT,
             config.CELL_INVESTIGATION_CASE_STUDY,
             config.REAL_DATA_COVERAGE_REPORT,
         ),
-        "Fast review path plus one concrete cell investigation and a candid data-boundary report.",
+        "Fast review path, panel guide, 200-cell ad-hoc prompt, concrete cell investigation, and candid data boundary.",
     ),
     ScorecardItem(
         "AI-powered reusable workflows",

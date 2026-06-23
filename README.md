@@ -46,12 +46,15 @@ committed so you can read them on GitHub without running anything:
 
 - [**Daily escalation summary**](reports/high_risk_cells_summary.md) — ranked high-risk cells with likely root cause + recommended follow-up.
 - [**Hiring manager review packet**](reports/hiring_manager_packet.md) — the fastest proof path: what to inspect first, evidence map, interview hooks, and honest boundaries.
+- [**Panel interview guide**](docs/interview/PANEL_INTERVIEW_GUIDE.md) — concise Apple Battery DS panel talk track, JD mapping, and no-overclaiming answers.
+- [**200-battery ad-hoc investigation**](reports/ad_hoc_200_battery_failure_investigation.md) — how to investigate 180 pass / 20 fail cells with SQL, bias controls, and engineering actions.
 - [**Single-cell investigation case study**](reports/cell_investigation_case_study.md) — one escalated cell with peer context, root-cause signal, and engineering follow-up.
 - [**Model performance summary**](reports/model_performance_summary.md) — SOH / RUL / retrospective failure / early-warning failure metrics.
 - [**Early-warning failure model**](reports/early_warning_model_summary.md) — first-50-cycle model with explicit leakage boundary.
 - [**Model release backtest**](reports/model_release_backtest.md) — later-cohort validation, baseline comparison, threshold cost, and calibration.
 - [**Censored RUL survival model**](reports/survival_rul_summary.md) — discrete-time hazard model for cells that have not yet crossed EOL.
 - [**Real NASA data validation**](reports/real_data_validation_summary.md) — degradation recovered from NASA's official `.mat` battery-aging archive.
+- [**NASA full-archive local run note**](reports/nasa_full_archive_local_run_summary.md) — clarifies that full-archive counts are optional/local, not the committed default report.
 - [**Real Oxford data validation**](reports/oxford_real_data_validation_summary.md) — second-source parser over Oxford pouch-cell cycling data.
 - [**Real-data limitations**](reports/real_data_coverage_and_limitations.md) — what is real, what remains synthetic, and what production validation would require.
 - [**Authorized production data contract**](docs/production_data_access/production_data_contract.md) — production-style schemas, access runbook, and validation plan without private data.
@@ -166,7 +169,9 @@ Upstream source (≈200MB): `https://phm-datasets.s3.amazonaws.com/NASA/5.+Batte
 The official archive is gitignored (too large to commit); CI runs on the bundled
 sample, while local runs that have the archive use the authoritative `.mat` files.
 
-**Validated real degradation (from the canonical official `.mat` cells):**
+**Committed/default CI-friendly NASA report:** the repo commits the canonical
+four-cell report below. This is the report a fresh clone or CI run can reproduce
+without downloading the full archive.
 
 | Battery | Discharge cycles | Capacity loss | First < 80% SOH | Corr(cycle, capacity) |
 | --- | --- | --- | --- | --- |
@@ -175,15 +180,18 @@ sample, while local runs that have the archive use the authoritative `.mat` file
 | B0007 | 168 | 24.3% | 123 | −0.99 |
 | B0018 | 132 | 27.7% | 74 | −0.97 |
 
-The local official archive exposes **34 batteries** (B0005–B0056). The default
-set is four for speed and clean CI evidence, overridable with `--battery-id`
-(for example, `python -m src.ingest.import_public_battery_data --battery-id B0049`)
-or `--all-available` for full local archive coverage. In the latest local
-full-archive run, the adapter parsed **34 batteries / 2,750 discharge rows** and
-labeled **13 batteries** as clear capacity-fade validation cases. Other parsed
-cells are retained with caution notes when they have short sequences, increasing
-capacity versus the first discharge, or weak/positive cycle-capacity correlation.
-See [`reports/real_data_coverage_and_limitations.md`](reports/real_data_coverage_and_limitations.md)
+**Optional local full-archive run:** if the official NASA archive exists locally,
+the default four batteries can be overridden with `--battery-id` (for example,
+`python -m src.ingest.import_public_battery_data --battery-id B0049`) or
+`--all-available` / `BATTERIES=all` for full local archive coverage. A recorded
+local full-archive run parsed **34 batteries / 2,750 discharge rows** and labeled
+**13 batteries** as clear capacity-fade validation cases. Those counts refer to
+the optional local archive run, not the committed/default report. The raw archive
+should remain local and must not be committed to Git.
+
+See [`reports/nasa_full_archive_local_run_summary.md`](reports/nasa_full_archive_local_run_summary.md)
+for the optional full-archive boundary and
+[`reports/real_data_coverage_and_limitations.md`](reports/real_data_coverage_and_limitations.md)
 for the honest production-readiness boundary.
 
 ---
@@ -379,7 +387,7 @@ A readable daily standup version is written to
 - Processed synthetic battery data (`data/processed/*.csv`)
 - Optional real public NASA battery validation report (`reports/real_data_validation_summary.md`)
 - Optional real public Oxford battery validation report (`reports/oxford_real_data_validation_summary.md`)
-- Hiring-manager review packet and single-cell case study (`reports/hiring_manager_packet.md`, `reports/cell_investigation_case_study.md`)
+- Hiring-manager review packet, panel guide, 200-battery ad-hoc report, and single-cell case study (`reports/hiring_manager_packet.md`, `docs/interview/PANEL_INTERVIEW_GUIDE.md`, `reports/ad_hoc_200_battery_failure_investigation.md`, `reports/cell_investigation_case_study.md`)
 - Local SQL warehouse (`data/processed/battery_warehouse.db`)
 - Trained model artifacts (`data/processed/models/*.joblib`)
 - Escalation report CSV + high-risk markdown summary (`reports/`)

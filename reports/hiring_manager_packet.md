@@ -1,6 +1,6 @@
 # Hiring Manager Review Packet
 
-_Generated: 2026-06-20 - fast review guide for a battery data-science hiring manager._
+_Generated: 2026-06-23 - fast review guide for a battery data-science hiring manager._
 
 ## First 60 Seconds
 
@@ -8,18 +8,24 @@ This project is strongest when reviewed as an engineering analytics system: batt
 
 Recommended skim path:
 
-1. Read `reports/cell_investigation_case_study.md` for one concrete escalation investigation.
-2. Read `reports/real_data_validation_summary.md` for real NASA battery-aging evidence.
-3. Read `reports/real_data_coverage_and_limitations.md` for the honest production boundary.
-4. Read `reports/project_readiness_scorecard.md` to map role expectations to files.
+1. Read `docs/interview/PANEL_INTERVIEW_GUIDE.md` for the panel talk track.
+2. Read `reports/ad_hoc_200_battery_failure_investigation.md` for the 200-cell pass/fail prompt.
+3. Read `reports/cell_investigation_case_study.md` for one concrete escalation investigation.
+4. Read `reports/real_data_validation_summary.md` for real NASA battery-aging evidence.
+5. Read `reports/nasa_full_archive_local_run_summary.md` for the default-vs-full-archive NASA boundary.
+6. Read `reports/real_data_coverage_and_limitations.md` for the honest production boundary.
+7. Read `reports/project_readiness_scorecard.md` to map role expectations to files.
 
-## Evidence Map (8/8 Present)
+## Evidence Map (11/11 Present)
 
 | Proof point | Artifact | Why it matters | Status |
 | --- | --- | --- | --- |
+| Panel interview guide | `docs/interview/PANEL_INTERVIEW_GUIDE.md` | Concise talk track for the Apple Battery DS panel, including what is real vs synthetic and how not to overclaim. | present |
+| 200-cell ad-hoc failure investigation | `reports/ad_hoc_200_battery_failure_investigation.md` | Turns the first-round prompt into a battery engineering analytics plan: label definition, SQL summaries, bias controls, validation, and actions. | present |
 | End-to-end runnable pipeline | `scripts/run_daily_pipeline.sh` | Generates data, features, warehouse, models, scores, reports, real-data validation, and file checks. | present |
 | Real public battery validation | `reports/real_data_validation_summary.md` | Parses NASA PCoE battery-aging data and reports capacity fade, SOH crossing, temperature, and correlation evidence. | present |
 | Honest real-data boundary | `reports/real_data_coverage_and_limitations.md` | Separates real NASA validation from synthetic factory, usage, failure labels, and escalation thresholds. | present |
+| NASA full-archive local-run boundary | `reports/nasa_full_archive_local_run_summary.md` | Clarifies that 34 batteries / 2,750 rows / 13 clear fade cases came from an optional local archive run, not the default committed report. | present |
 | Battery cell investigation | `reports/cell_investigation_case_study.md` | Shows one escalated cell, peer context, likely driver, and engineering follow-up. | present |
 | Model evidence | `reports/model_performance_summary.md` | Summarizes SOH, RUL, failure-risk metrics and explains why synthetic metrics are implementation checks. | present |
 | Operational escalation output | `reports/high_risk_cells_summary.md` | Daily queue with risk tiers, likely root causes, and recommended engineering actions. | present |
